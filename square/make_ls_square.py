@@ -6,35 +6,30 @@ rad = 2.5
 # Half square side
 halfside = rad * np.sqrt(0.5)
 
-nx = 21 # Number of grid points in x-direction, i.e., # intervals + 1
-ny = 21 # y-direction
-nz = 1 # z-direction
+nx = 20 # Number of grid points in x-direction, i.e., # intervals + 1
+ny = 20 # y-direction
 stride = 0.5 # Grid stride
 
 # Assume the grid starts at [0,0,0] and place COM at center of grid
 xcom = 0.5 * (nx - 1) * stride
 ycom = 0.5 * (ny - 1) * stride
-zcom = 0.5 * (nz - 1) * stride
 
-ls_dem_grid = np.zeros(nx * ny * nz)
-# Traverse grid along x, then y, then z
-for iz in range(nz):
-    for iy in range(ny):
-        for ix in range(nx):
-            ndx = ix + iy * nx + iz * nx * ny
-            delx = ix * stride - xcom
-            dely = iy * stride - ycom
-            delz = iz * stride - zcom
-            ls_dem_grid[ndx] = np.max([np.abs(delx), np.abs(dely)]) - halfside
-            print(ix, iy, iz, delx, dely, delz, xcom, ycom, zcom, halfside, ls_dem_grid[ndx])
+ls_dem_grid = np.zeros(nx * ny)
+# Traverse grid along x, then y
+for iy in range(ny):
+    for ix in range(nx):
+        ndx = ix + iy * nx
+        delx = ix * stride - xcom
+        dely = iy * stride - ycom
+        ls_dem_grid[ndx] = np.max([np.abs(delx), np.abs(dely)]) - halfside
 
-grid_min = [-xcom, -ycom, -zcom] # Relative to COM
+grid_min = [-xcom, -ycom] # Relative to COM
 
 with open("grid_square.txt", "w") as f:
     f.write(f"# Grid file for a square of side s={2*halfside} \n")
-    f.write(f"{nx} {ny} {nz}\n")
+    f.write(f"{nx} {ny}\n")
     f.write(f"{stride}\n")
-    f.write(f"{grid_min[0]} {grid_min[1]} {grid_min[2]}\n")
+    f.write(f"{grid_min[0]} {grid_min[1]}\n")
     for ls in ls_dem_grid:
         f.write(f"{ls}\n")
 
