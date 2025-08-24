@@ -4,14 +4,14 @@ import numpy as np
 from math import sqrt, pi
 
 # Use the same values Joel hardcoded pair_ls_dem
-rad = 5.0
+rad = 2.5
 
-nintervals = 20
-nbuff = 2
+nintervals = 10
+nbuff = 4
 nx = nintervals + 1 + 2*nbuff # Number of grid points in x-direction, i.e., # intervals + 1
 ny = nintervals + 1 + 2*nbuff # y-direction
 nz = nintervals + 1 + 2*nbuff
-stride = rad/nintervals/2 # Grid stride
+stride = 2*rad/nintervals # Grid stride 0.5
 
 # Assume the grid starts at [0,0,0] and place COM at center of grid
 xcom = 0.5 * (nx - 1) * stride # I don't get the 5.25 from Joel
@@ -57,7 +57,7 @@ Two methods:
 # -------------------------
 method = "icosa"   # "fibonacci" or "icosa"
 num_points = 100       # desired number of points (used directly for fibonacci)
-subdiv = 1             # only used for "icosa": number of subdivisions (integer >=0)
+subdiv = 3             # only used for "icosa": number of subdivisions (integer >=0)
 outfile = "data_sphere"  # output filename
 # -------------------------
 
@@ -184,6 +184,6 @@ with open(outfile, "w") as f:
     f.write(f"{-rad} {rad} zlo zhi\n\n")
     f.write("Atoms\n\n")
     for i, (xi, yi, zi) in enumerate(pts):
-        f.write(f"{i+1} 1 1 1.0 {xi:.12e} {yi:.12e} {zi:.12e}\n")
+        f.write(f"{i+1} 1 1 1.0 {xi} {yi} {zi}\n")
 
 print(f"Wrote {len(pts)} points to {outfile} using method='{method}'.")
