@@ -32,7 +32,8 @@ neigh_modify   exclude molecule/intra all
 fix             1 all rigid/ls/dem molecule infile infile_sphere
 
 pair_style ls/dem 1.0
-pair_coeff * * 1.0e7 1.0 0.1
+# * * kt kn mu alpha Lmax2
+pair_coeff * * 1.0e7 0.0 0.0 1.0 0.1
 
 thermo_style custom step
 timestep 1.0e-6
