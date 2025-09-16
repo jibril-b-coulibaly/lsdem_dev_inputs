@@ -40,7 +40,7 @@ fix             2 all enforce2d
 
 
 pair_style ls/dem 1.0
-pair_coeff * * 1.0 1.0 0.1
+pair_coeff * * 1.0 0.5 0.1 1.0 0.1
 
 thermo_style custom step
 timestep 0.1
