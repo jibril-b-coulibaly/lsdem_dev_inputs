@@ -17,9 +17,12 @@ read_data data_sphere add 1000 2 shift 0.0 0.0 0.0
 group           grain1 molecule 1
 group           grain2 molecule 2
 
+# Gravity
+fix grav grain1 gravity 9.81 vector -1 0 0
+
 # Immobilise bottom grain
-# fix immob grain2 freeze # This doesn't seem to work
-fix noF grain2 setforce 0.0 0.0 0.0
+fix immob grain2 freeze
+#fix noF grain2 setforce 0.0 0.0 0.0
 
 # rotate grain1 by 25 degrees
 #displace_atoms grain1 rotate -3 0 0 0 0 1 45.0
@@ -34,7 +37,7 @@ fix noF grain2 setforce 0.0 0.0 0.0
 neigh_modify   exclude molecule/intra all
 
 fix             1 all rigid/ls/dem molecule infile infile_sphere
-fix grav grain1 gravity 9.81 vector -1 0 0
+
 
 pair_style ls/dem 1.0
 # pair_coeff * * kn kt mu cut gamma
