@@ -37,11 +37,11 @@ fix             1 all rigid/ls/dem molecule infile infile_sphere
 fix grav grain1 gravity 9.81 vector -1 0 0
 
 pair_style ls/dem 1.0
-# pair_coeff * * kt kn mu cut gamma
-pair_coeff * * 10000 2000 0.5 1.0 0.1
+# pair_coeff * * kn kt mu cut gamma
+pair_coeff * * 1e6 2000 0.5 1.0 0.1
 
 thermo_style custom step
-timestep 0.0001
+timestep 1e-4
 
 thermo 1000
 run 500
