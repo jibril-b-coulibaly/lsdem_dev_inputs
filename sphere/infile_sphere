@@ -5,5 +5,5 @@
 # Inertia values for sphere are (2/5)MR² = 4188.79020479
 # ID1 masstotal xcm ycm zcm ixx iyy izz ixy ixz iyz vxcm vycm vzcm lx ly lz ixcm iycm izcm scale gridfile
 2
-1 10471.975512 15.0 0.0 0.0 4188.79020479 4188.79020479 4188.79020479 0.0 0.0 0.0 0.1 0.0 0.0 0.0 0.0 0.0 0 0 0 1 1.0 grid_sphere.txt
+1 10471.975512 15.0 0.0 0.0 4188.79020479 4188.79020479 4188.79020479 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0 0 0 1 1.0 grid_sphere.txt
 2 10471.975512 0.0 0.0 0.0 4188.79020479 4188.79020479 4188.79020479 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0 0 0 1 1.0 grid_sphere.txt

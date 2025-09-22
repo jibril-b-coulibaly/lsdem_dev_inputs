@@ -18,8 +18,8 @@ group           grain1 molecule 1
 group           grain2 molecule 2
 
 # Immobilise bottom grain
-velocity grain2 set 0.0 0.0 0.0
-fix freeze grain2 setforce 0.0 0.0 0.0
+# fix immob grain2 freeze # This doesn't seem to work
+fix noF grain2 setforce 0.0 0.0 0.0
 
 # rotate grain1 by 25 degrees
 #displace_atoms grain1 rotate -3 0 0 0 0 1 45.0
@@ -34,14 +34,14 @@ fix freeze grain2 setforce 0.0 0.0 0.0
 neigh_modify   exclude molecule/intra all
 
 fix             1 all rigid/ls/dem molecule infile infile_sphere
-fix grav all gravity 9.81 vector -1 0 0
+fix grav grain1 gravity 9.81 vector -1 0 0
 
 pair_style ls/dem 1.0
-# * * kt kn mu alpha Lmax2
-pair_coeff * * 1.0e7 0.0 0.0 1.0 0.1
+# pair_coeff * * kt kn mu cut gamma
+pair_coeff * * 10000 2000 0.5 1.0 0.1
 
 thermo_style custom step
-timestep 1.0e-4
+timestep 0.0001
 
 thermo 1000
 run 500
