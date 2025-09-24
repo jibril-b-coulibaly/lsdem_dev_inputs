@@ -2,7 +2,8 @@ units si
 dimension 3
 boundary p p p
 atom_style sphere
-comm_modify vel yes cutoff 12.0
+# below cutoff was 12.0
+comm_modify vel yes cutoff 1.0
 atom_modify map yes
 newton off
 
@@ -11,8 +12,8 @@ create_box         1 box
 
 fix             0 all property/atom mol ghost yes
 
-read_data data_sphere add 0 1 shift 15 0.0 0.0
-read_data data_sphere add 1000 2 shift 0.0 0.0 0.0
+read_data data_sphere add 0 1 shift 15.0 0.0 0.0
+read_data data_sphere add 1600 2 shift 0.0 0.0 0.0
 
 group           grain1 molecule 1
 group           grain2 molecule 2
@@ -41,10 +42,10 @@ fix             1 all rigid/ls/dem molecule infile infile_sphere
 
 pair_style ls/dem 1.0
 # pair_coeff * * kn kt mu cut gamma
-pair_coeff * * 1e6 2000 0.5 1.0 0.1
+pair_coeff * * 1e7 0.0 0.0 1.0 0.1
 
 thermo_style custom step
-timestep 1e-4
+timestep 1e-5
 
 thermo 1000
 run 500
@@ -52,5 +53,5 @@ run 500
 thermo 500
 dump mydump all custom 500 atomDump_sphere id type mol x y z vx vy vz fx fy fz
 
-run 1000000
+run 400000
 
