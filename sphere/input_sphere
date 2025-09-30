@@ -32,11 +32,11 @@ fix             1 all rigid/ls/dem molecule infile infile_sphere
 
 
 pair_style ls/dem 1.0
-# pair_coeff * * kn kt mu etan etat cut kn1 etan1 kt1 etat1
-pair_coeff * * 1.0e7 0 0 0 0 1.0 0 0 0 0
+# pair_coeff * * kn kt mu etan etat knp cut kn1 etan1 kt1 etat1
+pair_coeff * * 1.0e7 0 0 0 0 0 1.0 0 0 0 0
 
 thermo_style custom step
-timestep 1e-6
+timestep 1e-5
 
 thermo 1000
 run 500
@@ -44,5 +44,5 @@ run 500
 thermo 10000
 dump mydump grain1 custom 1000 atomDump_sphere id type mol x y z vx vy vz fx fy fz
 
-run 4e6
+run 1000000
 

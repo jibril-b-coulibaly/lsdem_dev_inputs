@@ -6,8 +6,8 @@ from math import sqrt, pi
 # Use the same values Joel hardcoded pair_ls_dem
 rad = 1.0
 
-nintervals = 20
-nbuff = 10 # Must be pretty high in some cases.
+nintervals = 30 # Was 20
+nbuff = 8 # Must be pretty high in some cases.
 nx = nintervals + 1 + 2*nbuff # Number of grid points in x-direction, i.e., # intervals + 1
 ny = nintervals + 1 + 2*nbuff # y-direction
 nz = nintervals + 1 + 2*nbuff
@@ -56,9 +56,9 @@ Two methods:
 # User parameters
 # -------------------------
 method = "fibonacci"   # "fibonacci" or "icosa"
-num_points = 800       # desired number of points (used directly for fibonacci)
+num_points = 3200       # desired number of points (used directly for fibonacci)
 subdiv = 3             # only used for "icosa": number of subdivisions (integer >=0)
-outfile = "data_sphere"  # output filename
+outfile = "data_sphere_3200"  # output filename
 # -------------------------
 
 def fibonacci_sphere(n, radius=1.0):
