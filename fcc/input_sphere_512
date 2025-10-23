@@ -2,12 +2,13 @@ units si
 dimension 3
 boundary p p p
 atom_style sphere
-# below cutoff was 12.0
-comm_modify vel yes cutoff 1.0
+# below cutoff was 1.0
+comm_modify vel yes cutoff 0.12
 atom_modify map yes
 newton off
 
-region             box block 0 0.33941125497 0 0.33941125497 0 0.33941125497 units box
+# Box size is 2.0*sqrt(2.0)*r*nUnitCells = latticeLen*nUnitCells
+region             box block 0 1.35764501988 0 1.35764501988 0 1.35764501988 units box
 create_box         1 box
 
 fix             0 all property/atom mol ghost yes
@@ -271,262 +272,8 @@ read_data data_sphere_512 add 130048 255 shift 1.187939 1.187939 0.678823
 read_data data_sphere_512 add 130560 256 shift 1.187939 1.187939 1.018234
 
 # Group definitions
-group           grain1 molecule 1
-group           grain2 molecule 2
-group           grain3 molecule 3
-group           grain4 molecule 4
-group           grain5 molecule 5
-group           grain6 molecule 6
-group           grain7 molecule 7
-group           grain8 molecule 8
-group           grain9 molecule 9
-group           grain10 molecule 10
-group           grain11 molecule 11
-group           grain12 molecule 12
-group           grain13 molecule 13
-group           grain14 molecule 14
-group           grain15 molecule 15
-group           grain16 molecule 16
-group           grain17 molecule 17
-group           grain18 molecule 18
-group           grain19 molecule 19
-group           grain20 molecule 20
-group           grain21 molecule 21
-group           grain22 molecule 22
-group           grain23 molecule 23
-group           grain24 molecule 24
-group           grain25 molecule 25
-group           grain26 molecule 26
-group           grain27 molecule 27
-group           grain28 molecule 28
-group           grain29 molecule 29
-group           grain30 molecule 30
-group           grain31 molecule 31
-group           grain32 molecule 32
-group           grain33 molecule 33
-group           grain34 molecule 34
-group           grain35 molecule 35
-group           grain36 molecule 36
-group           grain37 molecule 37
-group           grain38 molecule 38
-group           grain39 molecule 39
-group           grain40 molecule 40
-group           grain41 molecule 41
-group           grain42 molecule 42
-group           grain43 molecule 43
-group           grain44 molecule 44
-group           grain45 molecule 45
-group           grain46 molecule 46
-group           grain47 molecule 47
-group           grain48 molecule 48
-group           grain49 molecule 49
-group           grain50 molecule 50
-group           grain51 molecule 51
-group           grain52 molecule 52
-group           grain53 molecule 53
-group           grain54 molecule 54
-group           grain55 molecule 55
-group           grain56 molecule 56
-group           grain57 molecule 57
-group           grain58 molecule 58
-group           grain59 molecule 59
-group           grain60 molecule 60
-group           grain61 molecule 61
-group           grain62 molecule 62
-group           grain63 molecule 63
-group           grain64 molecule 64
-group           grain65 molecule 65
-group           grain66 molecule 66
-group           grain67 molecule 67
-group           grain68 molecule 68
-group           grain69 molecule 69
-group           grain70 molecule 70
-group           grain71 molecule 71
-group           grain72 molecule 72
-group           grain73 molecule 73
-group           grain74 molecule 74
-group           grain75 molecule 75
-group           grain76 molecule 76
-group           grain77 molecule 77
-group           grain78 molecule 78
-group           grain79 molecule 79
-group           grain80 molecule 80
-group           grain81 molecule 81
-group           grain82 molecule 82
-group           grain83 molecule 83
-group           grain84 molecule 84
-group           grain85 molecule 85
-group           grain86 molecule 86
-group           grain87 molecule 87
-group           grain88 molecule 88
-group           grain89 molecule 89
-group           grain90 molecule 90
-group           grain91 molecule 91
-group           grain92 molecule 92
-group           grain93 molecule 93
-group           grain94 molecule 94
-group           grain95 molecule 95
-group           grain96 molecule 96
-group           grain97 molecule 97
-group           grain98 molecule 98
-group           grain99 molecule 99
-group           grain100 molecule 100
-group           grain101 molecule 101
-group           grain102 molecule 102
-group           grain103 molecule 103
-group           grain104 molecule 104
-group           grain105 molecule 105
-group           grain106 molecule 106
-group           grain107 molecule 107
-group           grain108 molecule 108
-group           grain109 molecule 109
-group           grain110 molecule 110
-group           grain111 molecule 111
-group           grain112 molecule 112
-group           grain113 molecule 113
-group           grain114 molecule 114
-group           grain115 molecule 115
-group           grain116 molecule 116
-group           grain117 molecule 117
-group           grain118 molecule 118
-group           grain119 molecule 119
-group           grain120 molecule 120
-group           grain121 molecule 121
-group           grain122 molecule 122
-group           grain123 molecule 123
-group           grain124 molecule 124
-group           grain125 molecule 125
-group           grain126 molecule 126
-group           grain127 molecule 127
-group           grain128 molecule 128
-group           grain129 molecule 129
-group           grain130 molecule 130
-group           grain131 molecule 131
-group           grain132 molecule 132
-group           grain133 molecule 133
-group           grain134 molecule 134
-group           grain135 molecule 135
-group           grain136 molecule 136
-group           grain137 molecule 137
-group           grain138 molecule 138
-group           grain139 molecule 139
-group           grain140 molecule 140
-group           grain141 molecule 141
-group           grain142 molecule 142
-group           grain143 molecule 143
-group           grain144 molecule 144
-group           grain145 molecule 145
-group           grain146 molecule 146
-group           grain147 molecule 147
-group           grain148 molecule 148
-group           grain149 molecule 149
-group           grain150 molecule 150
-group           grain151 molecule 151
-group           grain152 molecule 152
-group           grain153 molecule 153
-group           grain154 molecule 154
-group           grain155 molecule 155
-group           grain156 molecule 156
-group           grain157 molecule 157
-group           grain158 molecule 158
-group           grain159 molecule 159
-group           grain160 molecule 160
-group           grain161 molecule 161
-group           grain162 molecule 162
-group           grain163 molecule 163
-group           grain164 molecule 164
-group           grain165 molecule 165
-group           grain166 molecule 166
-group           grain167 molecule 167
-group           grain168 molecule 168
-group           grain169 molecule 169
-group           grain170 molecule 170
-group           grain171 molecule 171
-group           grain172 molecule 172
-group           grain173 molecule 173
-group           grain174 molecule 174
-group           grain175 molecule 175
-group           grain176 molecule 176
-group           grain177 molecule 177
-group           grain178 molecule 178
-group           grain179 molecule 179
-group           grain180 molecule 180
-group           grain181 molecule 181
-group           grain182 molecule 182
-group           grain183 molecule 183
-group           grain184 molecule 184
-group           grain185 molecule 185
-group           grain186 molecule 186
-group           grain187 molecule 187
-group           grain188 molecule 188
-group           grain189 molecule 189
-group           grain190 molecule 190
-group           grain191 molecule 191
-group           grain192 molecule 192
-group           grain193 molecule 193
-group           grain194 molecule 194
-group           grain195 molecule 195
-group           grain196 molecule 196
-group           grain197 molecule 197
-group           grain198 molecule 198
-group           grain199 molecule 199
-group           grain200 molecule 200
-group           grain201 molecule 201
-group           grain202 molecule 202
-group           grain203 molecule 203
-group           grain204 molecule 204
-group           grain205 molecule 205
-group           grain206 molecule 206
-group           grain207 molecule 207
-group           grain208 molecule 208
-group           grain209 molecule 209
-group           grain210 molecule 210
-group           grain211 molecule 211
-group           grain212 molecule 212
-group           grain213 molecule 213
-group           grain214 molecule 214
-group           grain215 molecule 215
-group           grain216 molecule 216
-group           grain217 molecule 217
-group           grain218 molecule 218
-group           grain219 molecule 219
-group           grain220 molecule 220
-group           grain221 molecule 221
-group           grain222 molecule 222
-group           grain223 molecule 223
-group           grain224 molecule 224
-group           grain225 molecule 225
-group           grain226 molecule 226
-group           grain227 molecule 227
-group           grain228 molecule 228
-group           grain229 molecule 229
-group           grain230 molecule 230
-group           grain231 molecule 231
-group           grain232 molecule 232
-group           grain233 molecule 233
-group           grain234 molecule 234
-group           grain235 molecule 235
-group           grain236 molecule 236
-group           grain237 molecule 237
-group           grain238 molecule 238
-group           grain239 molecule 239
-group           grain240 molecule 240
-group           grain241 molecule 241
-group           grain242 molecule 242
-group           grain243 molecule 243
-group           grain244 molecule 244
-group           grain245 molecule 245
-group           grain246 molecule 246
-group           grain247 molecule 247
-group           grain248 molecule 248
-group           grain249 molecule 249
-group           grain250 molecule 250
-group           grain251 molecule 251
-group           grain252 molecule 252
-group           grain253 molecule 253
-group           grain254 molecule 254
-group           grain255 molecule 255
-group           grain256 molecule 256
+group	grains molecule <> 1 255
+
 
 # Initial velocities are given in infile_sphere
 
@@ -545,17 +292,16 @@ dump mydump all custom 1000 atomDump_sphere_512 id type mol x y z vx vy vz fx fy
 variable erate equal 0.01      # fractional strain rate (1% per time unit)
 variable tot_strain equal 0.20 # target strain (20%)
 
-# compute time steps to reach max strain
-variable steps_to_max equal ceil((v_tot_strain/v_erate)/${timestep})
+# Number of time steps to maximum compression = ceil((v_tot_strain/v_erate)/timestep) = 25000
 
 # --- Apply compression along z (positive engineering strain) ---
 # remap x : atom positions are rescaled with the box (typical for homogeneous strain)
-fix 1 all deform 1 z erate ${erate} units box remap x
-run ${steps_to_max}
-unfix 1
+fix 2 all deform 1 z erate ${erate} units box remap x
+run 25000
+unfix 2
 
 # stop deformation and reverse sign (decompress back to original)
-fix 2 all deform 1 z erate -${erate} units box remap x
-run ${steps_to_max}
-unfix 2
+fix 3 all deform 1 z erate -${erate} units box remap x
+run 25000
+unfix 3
 
