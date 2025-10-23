@@ -1,0 +1,561 @@
+units si
+dimension 3
+boundary p p p
+atom_style sphere
+# below cutoff was 12.0
+comm_modify vel yes cutoff 1.0
+atom_modify map yes
+newton off
+
+region             box block 0 0.33941125497 0 0.33941125497 0 0.33941125497 units box
+create_box         1 box
+
+fix             0 all property/atom mol ghost yes
+
+# Command filename add number_atoms mol_id shift posx posy posz
+read_data data_sphere_512 add 0 1 shift 0.000000 0.000000 0.000000
+read_data data_sphere_512 add 512 2 shift 0.000000 0.000000 0.339411
+read_data data_sphere_512 add 1024 3 shift 0.000000 0.000000 0.678823
+read_data data_sphere_512 add 1536 4 shift 0.000000 0.000000 1.018234
+read_data data_sphere_512 add 2048 5 shift 0.000000 0.339411 0.000000
+read_data data_sphere_512 add 2560 6 shift 0.000000 0.339411 0.339411
+read_data data_sphere_512 add 3072 7 shift 0.000000 0.339411 0.678823
+read_data data_sphere_512 add 3584 8 shift 0.000000 0.339411 1.018234
+read_data data_sphere_512 add 4096 9 shift 0.000000 0.678823 0.000000
+read_data data_sphere_512 add 4608 10 shift 0.000000 0.678823 0.339411
+read_data data_sphere_512 add 5120 11 shift 0.000000 0.678823 0.678823
+read_data data_sphere_512 add 5632 12 shift 0.000000 0.678823 1.018234
+read_data data_sphere_512 add 6144 13 shift 0.000000 1.018234 0.000000
+read_data data_sphere_512 add 6656 14 shift 0.000000 1.018234 0.339411
+read_data data_sphere_512 add 7168 15 shift 0.000000 1.018234 0.678823
+read_data data_sphere_512 add 7680 16 shift 0.000000 1.018234 1.018234
+read_data data_sphere_512 add 8192 17 shift 0.339411 0.000000 0.000000
+read_data data_sphere_512 add 8704 18 shift 0.339411 0.000000 0.339411
+read_data data_sphere_512 add 9216 19 shift 0.339411 0.000000 0.678823
+read_data data_sphere_512 add 9728 20 shift 0.339411 0.000000 1.018234
+read_data data_sphere_512 add 10240 21 shift 0.339411 0.339411 0.000000
+read_data data_sphere_512 add 10752 22 shift 0.339411 0.339411 0.339411
+read_data data_sphere_512 add 11264 23 shift 0.339411 0.339411 0.678823
+read_data data_sphere_512 add 11776 24 shift 0.339411 0.339411 1.018234
+read_data data_sphere_512 add 12288 25 shift 0.339411 0.678823 0.000000
+read_data data_sphere_512 add 12800 26 shift 0.339411 0.678823 0.339411
+read_data data_sphere_512 add 13312 27 shift 0.339411 0.678823 0.678823
+read_data data_sphere_512 add 13824 28 shift 0.339411 0.678823 1.018234
+read_data data_sphere_512 add 14336 29 shift 0.339411 1.018234 0.000000
+read_data data_sphere_512 add 14848 30 shift 0.339411 1.018234 0.339411
+read_data data_sphere_512 add 15360 31 shift 0.339411 1.018234 0.678823
+read_data data_sphere_512 add 15872 32 shift 0.339411 1.018234 1.018234
+read_data data_sphere_512 add 16384 33 shift 0.678823 0.000000 0.000000
+read_data data_sphere_512 add 16896 34 shift 0.678823 0.000000 0.339411
+read_data data_sphere_512 add 17408 35 shift 0.678823 0.000000 0.678823
+read_data data_sphere_512 add 17920 36 shift 0.678823 0.000000 1.018234
+read_data data_sphere_512 add 18432 37 shift 0.678823 0.339411 0.000000
+read_data data_sphere_512 add 18944 38 shift 0.678823 0.339411 0.339411
+read_data data_sphere_512 add 19456 39 shift 0.678823 0.339411 0.678823
+read_data data_sphere_512 add 19968 40 shift 0.678823 0.339411 1.018234
+read_data data_sphere_512 add 20480 41 shift 0.678823 0.678823 0.000000
+read_data data_sphere_512 add 20992 42 shift 0.678823 0.678823 0.339411
+read_data data_sphere_512 add 21504 43 shift 0.678823 0.678823 0.678823
+read_data data_sphere_512 add 22016 44 shift 0.678823 0.678823 1.018234
+read_data data_sphere_512 add 22528 45 shift 0.678823 1.018234 0.000000
+read_data data_sphere_512 add 23040 46 shift 0.678823 1.018234 0.339411
+read_data data_sphere_512 add 23552 47 shift 0.678823 1.018234 0.678823
+read_data data_sphere_512 add 24064 48 shift 0.678823 1.018234 1.018234
+read_data data_sphere_512 add 24576 49 shift 1.018234 0.000000 0.000000
+read_data data_sphere_512 add 25088 50 shift 1.018234 0.000000 0.339411
+read_data data_sphere_512 add 25600 51 shift 1.018234 0.000000 0.678823
+read_data data_sphere_512 add 26112 52 shift 1.018234 0.000000 1.018234
+read_data data_sphere_512 add 26624 53 shift 1.018234 0.339411 0.000000
+read_data data_sphere_512 add 27136 54 shift 1.018234 0.339411 0.339411
+read_data data_sphere_512 add 27648 55 shift 1.018234 0.339411 0.678823
+read_data data_sphere_512 add 28160 56 shift 1.018234 0.339411 1.018234
+read_data data_sphere_512 add 28672 57 shift 1.018234 0.678823 0.000000
+read_data data_sphere_512 add 29184 58 shift 1.018234 0.678823 0.339411
+read_data data_sphere_512 add 29696 59 shift 1.018234 0.678823 0.678823
+read_data data_sphere_512 add 30208 60 shift 1.018234 0.678823 1.018234
+read_data data_sphere_512 add 30720 61 shift 1.018234 1.018234 0.000000
+read_data data_sphere_512 add 31232 62 shift 1.018234 1.018234 0.339411
+read_data data_sphere_512 add 31744 63 shift 1.018234 1.018234 0.678823
+read_data data_sphere_512 add 32256 64 shift 1.018234 1.018234 1.018234
+read_data data_sphere_512 add 32768 65 shift 0.000000 0.169706 0.169706
+read_data data_sphere_512 add 33280 66 shift 0.000000 0.169706 0.509117
+read_data data_sphere_512 add 33792 67 shift 0.000000 0.169706 0.848528
+read_data data_sphere_512 add 34304 68 shift 0.000000 0.169706 1.187939
+read_data data_sphere_512 add 34816 69 shift 0.000000 0.509117 0.169706
+read_data data_sphere_512 add 35328 70 shift 0.000000 0.509117 0.509117
+read_data data_sphere_512 add 35840 71 shift 0.000000 0.509117 0.848528
+read_data data_sphere_512 add 36352 72 shift 0.000000 0.509117 1.187939
+read_data data_sphere_512 add 36864 73 shift 0.000000 0.848528 0.169706
+read_data data_sphere_512 add 37376 74 shift 0.000000 0.848528 0.509117
+read_data data_sphere_512 add 37888 75 shift 0.000000 0.848528 0.848528
+read_data data_sphere_512 add 38400 76 shift 0.000000 0.848528 1.187939
+read_data data_sphere_512 add 38912 77 shift 0.000000 1.187939 0.169706
+read_data data_sphere_512 add 39424 78 shift 0.000000 1.187939 0.509117
+read_data data_sphere_512 add 39936 79 shift 0.000000 1.187939 0.848528
+read_data data_sphere_512 add 40448 80 shift 0.000000 1.187939 1.187939
+read_data data_sphere_512 add 40960 81 shift 0.339411 0.169706 0.169706
+read_data data_sphere_512 add 41472 82 shift 0.339411 0.169706 0.509117
+read_data data_sphere_512 add 41984 83 shift 0.339411 0.169706 0.848528
+read_data data_sphere_512 add 42496 84 shift 0.339411 0.169706 1.187939
+read_data data_sphere_512 add 43008 85 shift 0.339411 0.509117 0.169706
+read_data data_sphere_512 add 43520 86 shift 0.339411 0.509117 0.509117
+read_data data_sphere_512 add 44032 87 shift 0.339411 0.509117 0.848528
+read_data data_sphere_512 add 44544 88 shift 0.339411 0.509117 1.187939
+read_data data_sphere_512 add 45056 89 shift 0.339411 0.848528 0.169706
+read_data data_sphere_512 add 45568 90 shift 0.339411 0.848528 0.509117
+read_data data_sphere_512 add 46080 91 shift 0.339411 0.848528 0.848528
+read_data data_sphere_512 add 46592 92 shift 0.339411 0.848528 1.187939
+read_data data_sphere_512 add 47104 93 shift 0.339411 1.187939 0.169706
+read_data data_sphere_512 add 47616 94 shift 0.339411 1.187939 0.509117
+read_data data_sphere_512 add 48128 95 shift 0.339411 1.187939 0.848528
+read_data data_sphere_512 add 48640 96 shift 0.339411 1.187939 1.187939
+read_data data_sphere_512 add 49152 97 shift 0.678823 0.169706 0.169706
+read_data data_sphere_512 add 49664 98 shift 0.678823 0.169706 0.509117
+read_data data_sphere_512 add 50176 99 shift 0.678823 0.169706 0.848528
+read_data data_sphere_512 add 50688 100 shift 0.678823 0.169706 1.187939
+read_data data_sphere_512 add 51200 101 shift 0.678823 0.509117 0.169706
+read_data data_sphere_512 add 51712 102 shift 0.678823 0.509117 0.509117
+read_data data_sphere_512 add 52224 103 shift 0.678823 0.509117 0.848528
+read_data data_sphere_512 add 52736 104 shift 0.678823 0.509117 1.187939
+read_data data_sphere_512 add 53248 105 shift 0.678823 0.848528 0.169706
+read_data data_sphere_512 add 53760 106 shift 0.678823 0.848528 0.509117
+read_data data_sphere_512 add 54272 107 shift 0.678823 0.848528 0.848528
+read_data data_sphere_512 add 54784 108 shift 0.678823 0.848528 1.187939
+read_data data_sphere_512 add 55296 109 shift 0.678823 1.187939 0.169706
+read_data data_sphere_512 add 55808 110 shift 0.678823 1.187939 0.509117
+read_data data_sphere_512 add 56320 111 shift 0.678823 1.187939 0.848528
+read_data data_sphere_512 add 56832 112 shift 0.678823 1.187939 1.187939
+read_data data_sphere_512 add 57344 113 shift 1.018234 0.169706 0.169706
+read_data data_sphere_512 add 57856 114 shift 1.018234 0.169706 0.509117
+read_data data_sphere_512 add 58368 115 shift 1.018234 0.169706 0.848528
+read_data data_sphere_512 add 58880 116 shift 1.018234 0.169706 1.187939
+read_data data_sphere_512 add 59392 117 shift 1.018234 0.509117 0.169706
+read_data data_sphere_512 add 59904 118 shift 1.018234 0.509117 0.509117
+read_data data_sphere_512 add 60416 119 shift 1.018234 0.509117 0.848528
+read_data data_sphere_512 add 60928 120 shift 1.018234 0.509117 1.187939
+read_data data_sphere_512 add 61440 121 shift 1.018234 0.848528 0.169706
+read_data data_sphere_512 add 61952 122 shift 1.018234 0.848528 0.509117
+read_data data_sphere_512 add 62464 123 shift 1.018234 0.848528 0.848528
+read_data data_sphere_512 add 62976 124 shift 1.018234 0.848528 1.187939
+read_data data_sphere_512 add 63488 125 shift 1.018234 1.187939 0.169706
+read_data data_sphere_512 add 64000 126 shift 1.018234 1.187939 0.509117
+read_data data_sphere_512 add 64512 127 shift 1.018234 1.187939 0.848528
+read_data data_sphere_512 add 65024 128 shift 1.018234 1.187939 1.187939
+read_data data_sphere_512 add 65536 129 shift 0.169706 0.000000 0.169706
+read_data data_sphere_512 add 66048 130 shift 0.169706 0.000000 0.509117
+read_data data_sphere_512 add 66560 131 shift 0.169706 0.000000 0.848528
+read_data data_sphere_512 add 67072 132 shift 0.169706 0.000000 1.187939
+read_data data_sphere_512 add 67584 133 shift 0.169706 0.339411 0.169706
+read_data data_sphere_512 add 68096 134 shift 0.169706 0.339411 0.509117
+read_data data_sphere_512 add 68608 135 shift 0.169706 0.339411 0.848528
+read_data data_sphere_512 add 69120 136 shift 0.169706 0.339411 1.187939
+read_data data_sphere_512 add 69632 137 shift 0.169706 0.678823 0.169706
+read_data data_sphere_512 add 70144 138 shift 0.169706 0.678823 0.509117
+read_data data_sphere_512 add 70656 139 shift 0.169706 0.678823 0.848528
+read_data data_sphere_512 add 71168 140 shift 0.169706 0.678823 1.187939
+read_data data_sphere_512 add 71680 141 shift 0.169706 1.018234 0.169706
+read_data data_sphere_512 add 72192 142 shift 0.169706 1.018234 0.509117
+read_data data_sphere_512 add 72704 143 shift 0.169706 1.018234 0.848528
+read_data data_sphere_512 add 73216 144 shift 0.169706 1.018234 1.187939
+read_data data_sphere_512 add 73728 145 shift 0.509117 0.000000 0.169706
+read_data data_sphere_512 add 74240 146 shift 0.509117 0.000000 0.509117
+read_data data_sphere_512 add 74752 147 shift 0.509117 0.000000 0.848528
+read_data data_sphere_512 add 75264 148 shift 0.509117 0.000000 1.187939
+read_data data_sphere_512 add 75776 149 shift 0.509117 0.339411 0.169706
+read_data data_sphere_512 add 76288 150 shift 0.509117 0.339411 0.509117
+read_data data_sphere_512 add 76800 151 shift 0.509117 0.339411 0.848528
+read_data data_sphere_512 add 77312 152 shift 0.509117 0.339411 1.187939
+read_data data_sphere_512 add 77824 153 shift 0.509117 0.678823 0.169706
+read_data data_sphere_512 add 78336 154 shift 0.509117 0.678823 0.509117
+read_data data_sphere_512 add 78848 155 shift 0.509117 0.678823 0.848528
+read_data data_sphere_512 add 79360 156 shift 0.509117 0.678823 1.187939
+read_data data_sphere_512 add 79872 157 shift 0.509117 1.018234 0.169706
+read_data data_sphere_512 add 80384 158 shift 0.509117 1.018234 0.509117
+read_data data_sphere_512 add 80896 159 shift 0.509117 1.018234 0.848528
+read_data data_sphere_512 add 81408 160 shift 0.509117 1.018234 1.187939
+read_data data_sphere_512 add 81920 161 shift 0.848528 0.000000 0.169706
+read_data data_sphere_512 add 82432 162 shift 0.848528 0.000000 0.509117
+read_data data_sphere_512 add 82944 163 shift 0.848528 0.000000 0.848528
+read_data data_sphere_512 add 83456 164 shift 0.848528 0.000000 1.187939
+read_data data_sphere_512 add 83968 165 shift 0.848528 0.339411 0.169706
+read_data data_sphere_512 add 84480 166 shift 0.848528 0.339411 0.509117
+read_data data_sphere_512 add 84992 167 shift 0.848528 0.339411 0.848528
+read_data data_sphere_512 add 85504 168 shift 0.848528 0.339411 1.187939
+read_data data_sphere_512 add 86016 169 shift 0.848528 0.678823 0.169706
+read_data data_sphere_512 add 86528 170 shift 0.848528 0.678823 0.509117
+read_data data_sphere_512 add 87040 171 shift 0.848528 0.678823 0.848528
+read_data data_sphere_512 add 87552 172 shift 0.848528 0.678823 1.187939
+read_data data_sphere_512 add 88064 173 shift 0.848528 1.018234 0.169706
+read_data data_sphere_512 add 88576 174 shift 0.848528 1.018234 0.509117
+read_data data_sphere_512 add 89088 175 shift 0.848528 1.018234 0.848528
+read_data data_sphere_512 add 89600 176 shift 0.848528 1.018234 1.187939
+read_data data_sphere_512 add 90112 177 shift 1.187939 0.000000 0.169706
+read_data data_sphere_512 add 90624 178 shift 1.187939 0.000000 0.509117
+read_data data_sphere_512 add 91136 179 shift 1.187939 0.000000 0.848528
+read_data data_sphere_512 add 91648 180 shift 1.187939 0.000000 1.187939
+read_data data_sphere_512 add 92160 181 shift 1.187939 0.339411 0.169706
+read_data data_sphere_512 add 92672 182 shift 1.187939 0.339411 0.509117
+read_data data_sphere_512 add 93184 183 shift 1.187939 0.339411 0.848528
+read_data data_sphere_512 add 93696 184 shift 1.187939 0.339411 1.187939
+read_data data_sphere_512 add 94208 185 shift 1.187939 0.678823 0.169706
+read_data data_sphere_512 add 94720 186 shift 1.187939 0.678823 0.509117
+read_data data_sphere_512 add 95232 187 shift 1.187939 0.678823 0.848528
+read_data data_sphere_512 add 95744 188 shift 1.187939 0.678823 1.187939
+read_data data_sphere_512 add 96256 189 shift 1.187939 1.018234 0.169706
+read_data data_sphere_512 add 96768 190 shift 1.187939 1.018234 0.509117
+read_data data_sphere_512 add 97280 191 shift 1.187939 1.018234 0.848528
+read_data data_sphere_512 add 97792 192 shift 1.187939 1.018234 1.187939
+read_data data_sphere_512 add 98304 193 shift 0.169706 0.169706 0.000000
+read_data data_sphere_512 add 98816 194 shift 0.169706 0.169706 0.339411
+read_data data_sphere_512 add 99328 195 shift 0.169706 0.169706 0.678823
+read_data data_sphere_512 add 99840 196 shift 0.169706 0.169706 1.018234
+read_data data_sphere_512 add 100352 197 shift 0.169706 0.509117 0.000000
+read_data data_sphere_512 add 100864 198 shift 0.169706 0.509117 0.339411
+read_data data_sphere_512 add 101376 199 shift 0.169706 0.509117 0.678823
+read_data data_sphere_512 add 101888 200 shift 0.169706 0.509117 1.018234
+read_data data_sphere_512 add 102400 201 shift 0.169706 0.848528 0.000000
+read_data data_sphere_512 add 102912 202 shift 0.169706 0.848528 0.339411
+read_data data_sphere_512 add 103424 203 shift 0.169706 0.848528 0.678823
+read_data data_sphere_512 add 103936 204 shift 0.169706 0.848528 1.018234
+read_data data_sphere_512 add 104448 205 shift 0.169706 1.187939 0.000000
+read_data data_sphere_512 add 104960 206 shift 0.169706 1.187939 0.339411
+read_data data_sphere_512 add 105472 207 shift 0.169706 1.187939 0.678823
+read_data data_sphere_512 add 105984 208 shift 0.169706 1.187939 1.018234
+read_data data_sphere_512 add 106496 209 shift 0.509117 0.169706 0.000000
+read_data data_sphere_512 add 107008 210 shift 0.509117 0.169706 0.339411
+read_data data_sphere_512 add 107520 211 shift 0.509117 0.169706 0.678823
+read_data data_sphere_512 add 108032 212 shift 0.509117 0.169706 1.018234
+read_data data_sphere_512 add 108544 213 shift 0.509117 0.509117 0.000000
+read_data data_sphere_512 add 109056 214 shift 0.509117 0.509117 0.339411
+read_data data_sphere_512 add 109568 215 shift 0.509117 0.509117 0.678823
+read_data data_sphere_512 add 110080 216 shift 0.509117 0.509117 1.018234
+read_data data_sphere_512 add 110592 217 shift 0.509117 0.848528 0.000000
+read_data data_sphere_512 add 111104 218 shift 0.509117 0.848528 0.339411
+read_data data_sphere_512 add 111616 219 shift 0.509117 0.848528 0.678823
+read_data data_sphere_512 add 112128 220 shift 0.509117 0.848528 1.018234
+read_data data_sphere_512 add 112640 221 shift 0.509117 1.187939 0.000000
+read_data data_sphere_512 add 113152 222 shift 0.509117 1.187939 0.339411
+read_data data_sphere_512 add 113664 223 shift 0.509117 1.187939 0.678823
+read_data data_sphere_512 add 114176 224 shift 0.509117 1.187939 1.018234
+read_data data_sphere_512 add 114688 225 shift 0.848528 0.169706 0.000000
+read_data data_sphere_512 add 115200 226 shift 0.848528 0.169706 0.339411
+read_data data_sphere_512 add 115712 227 shift 0.848528 0.169706 0.678823
+read_data data_sphere_512 add 116224 228 shift 0.848528 0.169706 1.018234
+read_data data_sphere_512 add 116736 229 shift 0.848528 0.509117 0.000000
+read_data data_sphere_512 add 117248 230 shift 0.848528 0.509117 0.339411
+read_data data_sphere_512 add 117760 231 shift 0.848528 0.509117 0.678823
+read_data data_sphere_512 add 118272 232 shift 0.848528 0.509117 1.018234
+read_data data_sphere_512 add 118784 233 shift 0.848528 0.848528 0.000000
+read_data data_sphere_512 add 119296 234 shift 0.848528 0.848528 0.339411
+read_data data_sphere_512 add 119808 235 shift 0.848528 0.848528 0.678823
+read_data data_sphere_512 add 120320 236 shift 0.848528 0.848528 1.018234
+read_data data_sphere_512 add 120832 237 shift 0.848528 1.187939 0.000000
+read_data data_sphere_512 add 121344 238 shift 0.848528 1.187939 0.339411
+read_data data_sphere_512 add 121856 239 shift 0.848528 1.187939 0.678823
+read_data data_sphere_512 add 122368 240 shift 0.848528 1.187939 1.018234
+read_data data_sphere_512 add 122880 241 shift 1.187939 0.169706 0.000000
+read_data data_sphere_512 add 123392 242 shift 1.187939 0.169706 0.339411
+read_data data_sphere_512 add 123904 243 shift 1.187939 0.169706 0.678823
+read_data data_sphere_512 add 124416 244 shift 1.187939 0.169706 1.018234
+read_data data_sphere_512 add 124928 245 shift 1.187939 0.509117 0.000000
+read_data data_sphere_512 add 125440 246 shift 1.187939 0.509117 0.339411
+read_data data_sphere_512 add 125952 247 shift 1.187939 0.509117 0.678823
+read_data data_sphere_512 add 126464 248 shift 1.187939 0.509117 1.018234
+read_data data_sphere_512 add 126976 249 shift 1.187939 0.848528 0.000000
+read_data data_sphere_512 add 127488 250 shift 1.187939 0.848528 0.339411
+read_data data_sphere_512 add 128000 251 shift 1.187939 0.848528 0.678823
+read_data data_sphere_512 add 128512 252 shift 1.187939 0.848528 1.018234
+read_data data_sphere_512 add 129024 253 shift 1.187939 1.187939 0.000000
+read_data data_sphere_512 add 129536 254 shift 1.187939 1.187939 0.339411
+read_data data_sphere_512 add 130048 255 shift 1.187939 1.187939 0.678823
+read_data data_sphere_512 add 130560 256 shift 1.187939 1.187939 1.018234
+
+# Group definitions
+group           grain1 molecule 1
+group           grain2 molecule 2
+group           grain3 molecule 3
+group           grain4 molecule 4
+group           grain5 molecule 5
+group           grain6 molecule 6
+group           grain7 molecule 7
+group           grain8 molecule 8
+group           grain9 molecule 9
+group           grain10 molecule 10
+group           grain11 molecule 11
+group           grain12 molecule 12
+group           grain13 molecule 13
+group           grain14 molecule 14
+group           grain15 molecule 15
+group           grain16 molecule 16
+group           grain17 molecule 17
+group           grain18 molecule 18
+group           grain19 molecule 19
+group           grain20 molecule 20
+group           grain21 molecule 21
+group           grain22 molecule 22
+group           grain23 molecule 23
+group           grain24 molecule 24
+group           grain25 molecule 25
+group           grain26 molecule 26
+group           grain27 molecule 27
+group           grain28 molecule 28
+group           grain29 molecule 29
+group           grain30 molecule 30
+group           grain31 molecule 31
+group           grain32 molecule 32
+group           grain33 molecule 33
+group           grain34 molecule 34
+group           grain35 molecule 35
+group           grain36 molecule 36
+group           grain37 molecule 37
+group           grain38 molecule 38
+group           grain39 molecule 39
+group           grain40 molecule 40
+group           grain41 molecule 41
+group           grain42 molecule 42
+group           grain43 molecule 43
+group           grain44 molecule 44
+group           grain45 molecule 45
+group           grain46 molecule 46
+group           grain47 molecule 47
+group           grain48 molecule 48
+group           grain49 molecule 49
+group           grain50 molecule 50
+group           grain51 molecule 51
+group           grain52 molecule 52
+group           grain53 molecule 53
+group           grain54 molecule 54
+group           grain55 molecule 55
+group           grain56 molecule 56
+group           grain57 molecule 57
+group           grain58 molecule 58
+group           grain59 molecule 59
+group           grain60 molecule 60
+group           grain61 molecule 61
+group           grain62 molecule 62
+group           grain63 molecule 63
+group           grain64 molecule 64
+group           grain65 molecule 65
+group           grain66 molecule 66
+group           grain67 molecule 67
+group           grain68 molecule 68
+group           grain69 molecule 69
+group           grain70 molecule 70
+group           grain71 molecule 71
+group           grain72 molecule 72
+group           grain73 molecule 73
+group           grain74 molecule 74
+group           grain75 molecule 75
+group           grain76 molecule 76
+group           grain77 molecule 77
+group           grain78 molecule 78
+group           grain79 molecule 79
+group           grain80 molecule 80
+group           grain81 molecule 81
+group           grain82 molecule 82
+group           grain83 molecule 83
+group           grain84 molecule 84
+group           grain85 molecule 85
+group           grain86 molecule 86
+group           grain87 molecule 87
+group           grain88 molecule 88
+group           grain89 molecule 89
+group           grain90 molecule 90
+group           grain91 molecule 91
+group           grain92 molecule 92
+group           grain93 molecule 93
+group           grain94 molecule 94
+group           grain95 molecule 95
+group           grain96 molecule 96
+group           grain97 molecule 97
+group           grain98 molecule 98
+group           grain99 molecule 99
+group           grain100 molecule 100
+group           grain101 molecule 101
+group           grain102 molecule 102
+group           grain103 molecule 103
+group           grain104 molecule 104
+group           grain105 molecule 105
+group           grain106 molecule 106
+group           grain107 molecule 107
+group           grain108 molecule 108
+group           grain109 molecule 109
+group           grain110 molecule 110
+group           grain111 molecule 111
+group           grain112 molecule 112
+group           grain113 molecule 113
+group           grain114 molecule 114
+group           grain115 molecule 115
+group           grain116 molecule 116
+group           grain117 molecule 117
+group           grain118 molecule 118
+group           grain119 molecule 119
+group           grain120 molecule 120
+group           grain121 molecule 121
+group           grain122 molecule 122
+group           grain123 molecule 123
+group           grain124 molecule 124
+group           grain125 molecule 125
+group           grain126 molecule 126
+group           grain127 molecule 127
+group           grain128 molecule 128
+group           grain129 molecule 129
+group           grain130 molecule 130
+group           grain131 molecule 131
+group           grain132 molecule 132
+group           grain133 molecule 133
+group           grain134 molecule 134
+group           grain135 molecule 135
+group           grain136 molecule 136
+group           grain137 molecule 137
+group           grain138 molecule 138
+group           grain139 molecule 139
+group           grain140 molecule 140
+group           grain141 molecule 141
+group           grain142 molecule 142
+group           grain143 molecule 143
+group           grain144 molecule 144
+group           grain145 molecule 145
+group           grain146 molecule 146
+group           grain147 molecule 147
+group           grain148 molecule 148
+group           grain149 molecule 149
+group           grain150 molecule 150
+group           grain151 molecule 151
+group           grain152 molecule 152
+group           grain153 molecule 153
+group           grain154 molecule 154
+group           grain155 molecule 155
+group           grain156 molecule 156
+group           grain157 molecule 157
+group           grain158 molecule 158
+group           grain159 molecule 159
+group           grain160 molecule 160
+group           grain161 molecule 161
+group           grain162 molecule 162
+group           grain163 molecule 163
+group           grain164 molecule 164
+group           grain165 molecule 165
+group           grain166 molecule 166
+group           grain167 molecule 167
+group           grain168 molecule 168
+group           grain169 molecule 169
+group           grain170 molecule 170
+group           grain171 molecule 171
+group           grain172 molecule 172
+group           grain173 molecule 173
+group           grain174 molecule 174
+group           grain175 molecule 175
+group           grain176 molecule 176
+group           grain177 molecule 177
+group           grain178 molecule 178
+group           grain179 molecule 179
+group           grain180 molecule 180
+group           grain181 molecule 181
+group           grain182 molecule 182
+group           grain183 molecule 183
+group           grain184 molecule 184
+group           grain185 molecule 185
+group           grain186 molecule 186
+group           grain187 molecule 187
+group           grain188 molecule 188
+group           grain189 molecule 189
+group           grain190 molecule 190
+group           grain191 molecule 191
+group           grain192 molecule 192
+group           grain193 molecule 193
+group           grain194 molecule 194
+group           grain195 molecule 195
+group           grain196 molecule 196
+group           grain197 molecule 197
+group           grain198 molecule 198
+group           grain199 molecule 199
+group           grain200 molecule 200
+group           grain201 molecule 201
+group           grain202 molecule 202
+group           grain203 molecule 203
+group           grain204 molecule 204
+group           grain205 molecule 205
+group           grain206 molecule 206
+group           grain207 molecule 207
+group           grain208 molecule 208
+group           grain209 molecule 209
+group           grain210 molecule 210
+group           grain211 molecule 211
+group           grain212 molecule 212
+group           grain213 molecule 213
+group           grain214 molecule 214
+group           grain215 molecule 215
+group           grain216 molecule 216
+group           grain217 molecule 217
+group           grain218 molecule 218
+group           grain219 molecule 219
+group           grain220 molecule 220
+group           grain221 molecule 221
+group           grain222 molecule 222
+group           grain223 molecule 223
+group           grain224 molecule 224
+group           grain225 molecule 225
+group           grain226 molecule 226
+group           grain227 molecule 227
+group           grain228 molecule 228
+group           grain229 molecule 229
+group           grain230 molecule 230
+group           grain231 molecule 231
+group           grain232 molecule 232
+group           grain233 molecule 233
+group           grain234 molecule 234
+group           grain235 molecule 235
+group           grain236 molecule 236
+group           grain237 molecule 237
+group           grain238 molecule 238
+group           grain239 molecule 239
+group           grain240 molecule 240
+group           grain241 molecule 241
+group           grain242 molecule 242
+group           grain243 molecule 243
+group           grain244 molecule 244
+group           grain245 molecule 245
+group           grain246 molecule 246
+group           grain247 molecule 247
+group           grain248 molecule 248
+group           grain249 molecule 249
+group           grain250 molecule 250
+group           grain251 molecule 251
+group           grain252 molecule 252
+group           grain253 molecule 253
+group           grain254 molecule 254
+group           grain255 molecule 255
+group           grain256 molecule 256
+
+# Initial velocities are given in infile_sphere
+
+neigh_modify   exclude molecule/intra all
+fix            1 all rigid/ls/dem molecule infile infile_sphere
+
+pair_style ls/dem 1.0
+# pair_coeff * * kn kt mu etan etat knp cut kn1 etan1 kt1 etat1
+pair_coeff * * 1.0e7 0.25e7 0.5 0 0 0 1.0 0 0 0 0
+
+timestep 8.0e-4
+thermo_style custom step pxx pyy pzz pxy pxz pyz
+thermo 1000
+dump mydump all custom 1000 atomDump_sphere_512 id type mol x y z vx vy vz fx fy fz
+
+variable erate equal 0.01      # fractional strain rate (1% per time unit)
+variable tot_strain equal 0.20 # target strain (20%)
+
+# compute time steps to reach max strain
+variable steps_to_max equal ceil((v_tot_strain/v_erate)/${timestep})
+
+# --- Apply compression along z (positive engineering strain) ---
+# remap x : atom positions are rescaled with the box (typical for homogeneous strain)
+fix 1 all deform 1 z erate ${erate} units box remap x
+run ${steps_to_max}
+unfix 1
+
+# stop deformation and reverse sign (decompress back to original)
+fix 2 all deform 1 z erate -${erate} units box remap x
+run ${steps_to_max}
+unfix 2
+
