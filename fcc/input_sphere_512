@@ -3,11 +3,11 @@ dimension 3
 boundary p p p
 atom_style sphere
 # below cutoff was 1.0
-comm_modify vel yes cutoff 0.12
+comm_modify vel yes cutoff 1.0
 atom_modify map yes
 newton off
 
-# Box size is 2.0*sqrt(2.0)*r*nUnitCells = latticeLen*nUnitCells
+# Box size is 2.0*sqrt(2.0)*r*nUnitCells = latticeLen*nUnitCells = 1.35764501988
 region             box block 0 1.35764501988 0 1.35764501988 0 1.35764501988 units box
 create_box         1 box
 
@@ -282,11 +282,11 @@ fix            1 all rigid/ls/dem molecule infile infile_sphere
 
 pair_style ls/dem 1.0
 # pair_coeff * * kn kt mu etan etat knp cut kn1 etan1 kt1 etat1
-pair_coeff * * 1.0e7 0.25e7 0.5 0 0 0 1.0 0 0 0 0
+pair_coeff * * 1.0e7 0.25e7 0.5 0 0 0 0.18 0 0 0 0
 
 timestep 8.0e-4
 thermo_style custom step pxx pyy pzz pxy pxz pyz
-thermo 1000
+thermo 10
 dump mydump all custom 1000 atomDump_sphere_512 id type mol x y z vx vy vz fx fy fz
 
 variable erate equal 0.01      # fractional strain rate (1% per time unit)
