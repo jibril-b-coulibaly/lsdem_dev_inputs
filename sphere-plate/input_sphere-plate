@@ -12,9 +12,12 @@ create_box 	1 box
 
 fix			0 all property/atom mol ghost yes
 
+# Set number of nodes
+variable N equal 100
+
 # Loading the nodes
-read_data	nodes_sphere_100 add 0 1 shift 0.0 0.0 1.5
-read_data	nodes_plate_100 add 100 2 shift 0.0 0.0 -0.5
+read_data	nodes_sphere_${N} add 0 1 shift 0.0 0.0 1.5
+read_data	nodes_plate_${N} add ${N} 2 shift 0.0 0.0 -0.5
 
 # Defining the objects as collections of nodes
 group		grain1 molecule 1
@@ -32,7 +35,7 @@ fix 		immob grain2 freeze
 
 # Apply LS-DEM fix and apply gravity fix
 # Initial velocities are given in the infile
-fix			1 all rigid/ls/dem molecule infile fixfile_sphere-plate gravity grav exclude/gravity grain2
+fix			lsfix all rigid/ls/dem molecule infile fixfile_sphere-plate gravity grav exclude/gravity grain2
 
 # Contact model 
 pair_style 	ls/dem 1.0
@@ -46,9 +49,9 @@ neighbor 0.25 bin
 thermo_style custom step
 timestep 1e-4
 
-
 thermo 1000
-dump mydump grain1 custom 10 atomDump_bounce_100 id type mol x y z vx vy vz fx fy fz
+#dump mydump grain1 custom 10 dump_grain_bounce_${N} id type mol x y z vx vy vz fx fy fz
+fix 	printer all print 10 "${step} ${f_lsfix[0]} ${f_lsfix[1]} ${f_lsfix[2]} ${f_lsfix[3]} ${f_lsfix[4]} ${f_lsfix[5]} ${f_lsfix[6]} ${f_lsfix[7]} ${f_lsfix[8]} ${f_lsfix[9]} ${f_lsfix[10]} ${f_lsfix[11]}" file dump_grain_bounce_${N}.txt screen no
 
 run 100000
 
