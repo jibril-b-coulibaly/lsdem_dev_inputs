@@ -49,7 +49,7 @@ def parse_file(path):
 #     return 0.1 * np.sin(2.0 * np.pi * freq * t + phase)
 
 # ---- Plotting ----
-def make_plots(all_data, all_times, labels, dt, outdir="figures", outprefix="grain_bounce"):
+def make_plots(all_data, all_times, labels, dt, caseflag, outdir="figures", outprefix="grain_bounce"):
     os.makedirs(outdir, exist_ok=True)
 
     groups = [
@@ -69,7 +69,7 @@ def make_plots(all_data, all_times, labels, dt, outdir="figures", outprefix="gra
 
     # Compute analytical solution
     t_ana = np.arange(0.0, global_max_t + dt, dt)
-    y_ana = analytical_solution(t_ana)
+    y_ana = analytical_solution(t_ana,caseflag)
 
     saved_files = []
     for gname, comps, indices in groups:
@@ -108,7 +108,7 @@ def make_plots(all_data, all_times, labels, dt, outdir="figures", outprefix="gra
     return saved_files
 
 # ---- Main ----
-def main(dt=1.0):
+def main(dt=1.0,caseflag=0):
     pattern = "dump_grain_bounce_*.txt"
     files = sorted(glob.glob(pattern))
 
@@ -138,13 +138,13 @@ def main(dt=1.0):
         labels.append(os.path.basename(f))
 
     print(f"Found {len(files)} file(s): {files}")
-    saved = make_plots(all_data, all_times, labels, dt, outdir="figures", outprefix="grain_bounce")
+    saved = make_plots(all_data, all_times, labels, dt, caseflag, outdir="figures", outprefix="grain_bounce")
     print("Saved plots:")
     for s in saved:
         print(" -", s)
 
 if __name__ == "__main__":
     # Example usage: main(dt=1e-5)
-    main(dt=1.0e-4)
+    main(dt=1.0e-4,caseflag=0)
 
 # End of file

@@ -2,14 +2,14 @@
 
 import numpy as np
 
-def analytical_solution(t):
+def analytical_solution(t,caseflag):
     """
     Analytical solution.
     """
     # Manual input, constants, starting pos
     R = 1.0                         # Radius sphere
     density = 2500                  # kg/m3
-    g = np.array([0.0,0.0,- 9.81])  # gravitational acceleration, m/s2
+    g = np.array([0.0,0.0,-9.81])  # gravitational acceleration, m/s2
     mass = 4.0/3.0*np.pi*R*R*R * density    # kg
 
     kn = 1.0e7    # 1/s2/m2
@@ -40,10 +40,10 @@ def analytical_solution(t):
             F[i,:] = np.array([0.0,0.0,0.0])
         else:
             # Contact
-            h = R - X[i,2]  # Cap height [m]
-            Acap = 2*np.pi*R*(R-X[i,2])
+            h = R - X[i-1,2]  # Cap height [m]
+            Acap = 2*np.pi*R*h
             # Normal component
-            fz = kn*np.pi*R*h*h - keta*V[i,2]*Acap
+            fz = kn*np.pi*R*h*h - keta*V[i-1,2]*Acap
 
 
             F[i,:] = np.array([0.0,0.0,fz])
