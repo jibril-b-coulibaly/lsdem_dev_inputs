@@ -37,7 +37,7 @@ def analytical_solution(t,caseflag):
     for i in range(1,numSteps):
         if X[i-1,2] > R:
             # No contact
-            F[i,:] = np.array([0.0,0.0,0.0])
+            F[i,:] = mass*g
         else:
             # Contact
             h = R - X[i-1,2]  # Cap height [m]
@@ -45,11 +45,10 @@ def analytical_solution(t,caseflag):
             # Normal component
             fz = kn*np.pi*R*h*h - keta*V[i-1,2]*Acap
 
-
-            F[i,:] = np.array([0.0,0.0,fz])
+            F[i,:] = np.array([0.0,0.0,fz]) + mass*g
 
         # Apply integration of motion
-        A = g + F[i,:] / mass
+        A = F[i,:] / mass
         V[i,:] = V[i-1,:] + A*dt
         X[i,:] = X[i-1,:] + V[i,:]*dt + 0.5*A*dt*dt
 

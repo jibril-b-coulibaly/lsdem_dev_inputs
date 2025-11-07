@@ -1,0 +1,6 @@
+# Sphere: masstotal is 10471.975512, i.e. radius 1.0 and density 2500, inertia values are (2/5)MR² = 4188.79020479
+# Plane: masstotal is ρTL^2 = 62500 , with L = 5.0 and D = 0.5, inertial values are Ix=Iy=1/12*m(L^2+T^2)=135416.666667, Iz=1/6*mL^2=260416.666667 
+# ID1 masstotal xcm ycm zcm ixx iyy izz ixy ixz iyz vxcm vycm vzcm lx ly lz ixcm iycm izcm memoryflag scale gridfile
+2
+1 10471.975512 0.0 0.0 1.5 4188.79020479 4188.79020479 4188.79020479 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0 0 0 0 1.0 grid_sphere.txt
+2 62500  0.0 0.0 -0.5 135416.666667 135416.666667 260416.666667  0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0 0 0 0 1.0 grid_sphere.txt

@@ -12,7 +12,7 @@ create_box 	1 box
 fix			0 all property/atom mol ghost yes
 
 # Set number of nodes
-variable N equal 100
+variable N equal 1600
 
 # Loading the nodes
 read_data	nodes_sphere_${N} add 0 1 shift 0.0 0.0 1.5
@@ -51,9 +51,10 @@ timestep 1e-4
 thermo 1000
 
 # LAMMPS allow to get the column of a global array with array[col] but not the row, so we must print all values by hand
-fix 	printer all print 10 "$(step) $(f_lsfix[1][1]) $(f_lsfix[1][2]) $(f_lsfix[1][3]) $(f_lsfix[1][4]) $(f_lsfix[1][5]) $(f_lsfix[1][6]) $(f_lsfix[1][7]) $(f_lsfix[1][8]) $(f_lsfix[1][9]) $(f_lsfix[1][10]) $(f_lsfix[1][11])" file dump_grain_bounce_${N}.txt screen no
+# x y z vx vy vz fx fy fz tx ty tz
+fix 	printer all print 10 "$(step) $(f_lsfix[1][1]) $(f_lsfix[1][2]) $(f_lsfix[1][3]) $(f_lsfix[1][4]) $(f_lsfix[1][5]) $(f_lsfix[1][6]) $(f_lsfix[1][7]) $(f_lsfix[1][8]) $(f_lsfix[1][9]) $(f_lsfix[1][10]) $(f_lsfix[1][11]) $(f_lsfix[1][12])" file dump_grain_bounce_${N}.txt screen no
 
-dump mydump grain1 custom 10 dump_grain_bounce_${N} id type mol x y z vx vy vz fx fy fz
+#dump mydump grain1 custom 10 dump_grain_bounce_${N} id type mol x y z vx vy vz fx fy fz
 
 run 50000
 

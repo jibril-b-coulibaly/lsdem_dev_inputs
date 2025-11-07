@@ -8,7 +8,7 @@ L = 5.0*1.0 # 5 times the radius of the sphere
 T = 1.0*1.0 # 1 time the radius of the sphere
 # Spacing between grid points (cell edge length)
 stride = 0.04 # Same as the sphere with R = 1.0 and nx,nz,ny = 53.
-nbuff = 2
+nbuff = 1
 
 nx = int(round(L/stride)) + 1 + 2*nbuff
 ny = int(round(L/stride)) + 1 + 2*nbuff
@@ -17,9 +17,12 @@ nz = int(round(T/stride)) + 1 + 2*nbuff
 # -------------------------
 # Cell-centre coordinates (x-fast ordering)
 # -------------------------
-grid_min_x = -0.5 * L - nbuff * stride + 0.5 * stride
-grid_min_y = -0.5 * L - nbuff * stride + 0.5 * stride
-grid_min_z = -0.5 * T - nbuff * stride + 0.5 * stride
+grid_min_x = - 0.5 * (nx - 1) * stride
+grid_min_y = - 0.5 * (ny - 1) * stride
+grid_min_z = - 0.5 * (nz - 1) * stride
+#grid_min_x = -0.5 * L - nbuff * stride #+ 0.5 * stride
+#grid_min_y = -0.5 * L - nbuff * stride #+ 0.5 * stride
+#grid_min_z = -0.5 * T - nbuff * stride #+ 0.5 * stride
 
 xs = grid_min_x + np.arange(nx) * stride
 ys = grid_min_y + np.arange(ny) * stride
@@ -29,6 +32,8 @@ N = nx * ny * nz
 Xc = np.empty(N, dtype=float)
 Yc = np.empty(N, dtype=float)
 Zc = np.empty(N, dtype=float)
+
+#ls_dem_grid = np.zeros(nx*ny*nz)
 
 idx = 0
 for iz in range(nz):
@@ -40,6 +45,26 @@ for iz in range(nz):
             Xc[idx] = x
             Yc[idx] = y
             Zc[idx] = z
+
+            # halfL = 0.5 * L
+            # halfT = 0.5 * T
+
+            # dx = np.abs(x) - halfL
+            # dy = np.abs(y) - halfL
+            # dz = np.abs(z) - halfT
+
+            # dxp = np.maximum(dx, 0.0)
+            # dyp = np.maximum(dy, 0.0)
+            # dzp = np.maximum(dz, 0.0)
+
+            # outside_dist = np.sqrt(dxp*dxp + dyp*dyp + dzp*dzp)
+            # inside_val = np.maximum(np.maximum(dx, dy), dz)
+
+            # if outside_dist > 0.0:
+            #     ls_dem_grid[idx] = outside_dist
+            # else:
+            #     ls_dem_grid[idx] = inside_val
+
             idx += 1
 
 # -------------------------
@@ -61,6 +86,9 @@ inside_val = np.maximum(np.maximum(dx, dy), dz)
 
 ls_dem_grid = np.where(outside_dist > 0.0, outside_dist, inside_val)   # φ flattened (x-fast)
 
+#test = ls_dem_grid - ls_dem_grid2
+#print(np.sum(abs(test)))
+
 # -------------------------
 # Write grid file
 # -------------------------
@@ -75,7 +103,6 @@ with open("grid_plate.txt", "w") as f:
 print(f"Wrote plate grid file with edge lengths L = {L}, thickness T = {T}, and grid spacing {stride}.")
 
 # End of file
-
 
 # # -------------------------
 # # Smeared Heaviside H(phi) and occupancy w = 1 - H
@@ -94,7 +121,7 @@ print(f"Wrote plate grid file with edge lengths L = {L}, thickness T = {T}, and 
 #     return H
 
 # eps = np.sqrt(0.75) * stride / 1.5   # smoothing half-width (tune if you need)
-# H = smeared_heaviside(sdf, eps)
+# H = smeared_heaviside(ls_dem_grid, eps)
 # w = 1.0 - H           # occupancy in [0,1] (1 = fully inside)
 
 # density = 2500.0
@@ -190,7 +217,7 @@ print(f"Wrote plate grid file with edge lengths L = {L}, thickness T = {T}, and 
 # # -------------------------
 # # Binary inside-mask counts (for cross-check)
 # # -------------------------
-# inside_mask = sdf <= 0.0
+# inside_mask = ls_dem_grid <= 0.0
 # count_inside = int(np.count_nonzero(inside_mask))
 # count_xpos = int(np.count_nonzero(inside_mask & (Xc > 0.0)))
 # count_xneg = int(np.count_nonzero(inside_mask & (Xc < 0.0)))

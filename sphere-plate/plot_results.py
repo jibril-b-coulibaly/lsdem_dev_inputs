@@ -79,7 +79,7 @@ def make_plots(all_data, all_times, labels, dt, caseflag, outdir="figures", outp
 
             # Analytical (plotted first, solid black line, thicker)
             ax.plot(t_ana, y_ana[:,idx], linestyle='-', linewidth=2.8,
-                    color='k', label='analytical (dummy)', zorder=0)
+                    color='k', label='Analytical solution', zorder=0)
 
             # Numerical datasets
             for data, times, lab in zip(all_data, all_times, labels):
