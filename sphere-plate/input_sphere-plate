@@ -12,7 +12,7 @@ create_box 	1 box
 fix			0 all property/atom mol ghost yes
 
 # Set number of nodes
-variable N equal 1600
+variable N equal 3200
 
 # Loading the nodes
 read_data	nodes_sphere_${N} add 0 1 shift 0.0 0.0 1.5
