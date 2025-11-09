@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """
-plot_grain_bounce.py — plots LAMMPS grain bounce data
-
-Now uses actual time instead of simulation steps.
+Plots LAMMPS grain bounce data
 """
 
 import glob
@@ -67,6 +65,8 @@ def make_plots(all_data, all_times, labels, dt, caseflag, outdir="figures", outp
     if global_max_t <= 0.0:
         global_max_t = dt  # fallback
 
+    #global_max_t /= 10 # TEMP FIX!!!
+
     # Compute analytical solution
     t_ana = np.arange(0.0, global_max_t + dt, dt)
     y_ana = analytical_solution(t_ana,caseflag)
@@ -109,7 +109,7 @@ def make_plots(all_data, all_times, labels, dt, caseflag, outdir="figures", outp
 
 # ---- Main ----
 def main(dt=1.0,caseflag=0):
-    pattern = "dump_grain_bounce_*.txt"
+    pattern = "dump_*.txt"
     files = sorted(glob.glob(pattern))
 
     if len(files) == 0:

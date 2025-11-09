@@ -12,7 +12,7 @@ create_box 	1 box
 fix			0 all property/atom mol ghost yes
 
 # Set number of nodes
-variable N equal 3200
+variable N equal 100
 
 # Loading the nodes
 read_data	nodes_sphere_${N} add 0 1 shift 0.0 0.0 1.5
@@ -47,7 +47,6 @@ neighbor 0.25 bin
 
 thermo_style custom step
 timestep 1e-4
-
 thermo 1000
 
 # LAMMPS allow to get the column of a global array with array[col] but not the row, so we must print all values by hand

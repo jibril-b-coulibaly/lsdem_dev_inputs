@@ -3,4 +3,4 @@
 # ID1 masstotal xcm ycm zcm ixx iyy izz ixy ixz iyz vxcm vycm vzcm lx ly lz ixcm iycm izcm memoryflag scale gridfile
 2
 1 62500  0.0 0.0 1.5 135416.666667 135416.666667 260416.666667 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0 0 0 0 1.0 grid_plate.txt
-2 62500  0.0 0.0 -0.5 135416.666667 135416.666667 260416.666667  0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0 0 0 0 1.0 grid_plate.txt
+2 62500  0.0 0.0 -0.5 135416.666667 135416.666667 260416.666667  0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0 0 0 0 1.0 grid_plate_big.txt
