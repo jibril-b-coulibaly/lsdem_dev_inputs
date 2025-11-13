@@ -1,0 +1,49 @@
+units si
+dimension 3
+boundary p p p
+atom_style sphere
+# below cutoff was 1.0
+comm_modify vel yes
+atom_modify map yes
+newton off
+
+# Box size is 2.0*sqrt(2.0)*r*nUnitCells = latticeLen*nUnitCells = 1.35764501988
+lattice fcc 0.40 #just a guess at a value
+region             box block 0 4 0 4 0 4
+create_box         1 box
+
+molecule        mymol mol_sphere_512
+fix             0 all property/atom mol ghost yes
+create_atoms    0 box mol mymol 1234 rotate 0 0 0 1
+
+
+variable        molID atom floor((id-1)/512)+1
+#set             group all mol v_molID
+
+
+# Initial velocities are given in infile_sphere
+
+neighbor       0.01 bin
+neigh_modify   exclude molecule/intra all
+fix            1 all rigid/ls/dem molecule infile infile_sphere
+
+pair_style ls/dem 1.0
+# pair_coeff * * kn kt mu etan etat knp cut kn1 etan1 kt1 etat1
+pair_coeff * * 1.0e7 0.25e7 0.5 0 0 0 0.18 0 0 0 0
+
+timestep 2e-3
+thermo_style custom step pxx pyy pzz pxy pxz pyz
+thermo 1
+dump mydump all custom 1 atomDump_sphere_512 id type mol x y z ix iy iz vx vy vz fx fy fz
+
+variable erate equal 0.01      # fractional strain rate (1% per time unit)
+variable tot_strain equal 0.20 # target strain (20%)
+
+# Number of time steps to maximum compression = ceil((v_tot_strain/v_erate)/timestep) = 25000
+
+# --- Apply compression along z (positive engineering strain) ---
+# remap x : atom positions are rescaled with the box (typical for homogeneous strain)
+fix 2 all deform 1 z erate $(-v_erate) units box remap v
+run 10
+
+
