@@ -19,7 +19,7 @@ group           grain1 molecule 1
 group           grain2 molecule 2
 
 # Gravity on top grain
-fix grav grain1 gravity 9.81 vector -1 0 0
+fix grav grain1 gravity 9.81 vector -1 0 0 disable
 
 # Immobilise bottom grain
 fix immob grain2 freeze
@@ -28,7 +28,7 @@ fix immob grain2 freeze
 
 neigh_modify   exclude molecule/intra all
 
-fix             1 all rigid/ls/dem molecule infile infile_sphere
+fix             1 all rigid/ls/dem molecule infile infile_sphere gravity grav
 
 
 pair_style ls/dem 1.0

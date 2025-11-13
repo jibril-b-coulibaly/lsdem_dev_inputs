@@ -3,7 +3,7 @@ dimension 3
 boundary p p p
 atom_style sphere
 # below cutoff was 12.0
-comm_modify vel yes cutoff 1.0
+comm_modify vel yes #cutoff 1.0
 atom_modify map yes
 newton off
 
@@ -19,7 +19,10 @@ group           grain1 molecule 1
 group           grain2 molecule 2
 
 # Gravity on top grain
-fix grav grain1 gravity 9.81 vector -1 0 0
+#fix grav grain1 gravity 9.81 vector -1 0 0 disable
+#fix grav grain1 gravity 9.81 vector -1 0 0 disable
+group nothing empty
+fix grav nothing gravity 9.81 vector -1 0 0
 
 # Immobilise bottom grain
 fix immob grain2 freeze
@@ -28,18 +31,22 @@ fix immob grain2 freeze
 
 neigh_modify   exclude molecule/intra all
 
-fix             1 all rigid/ls/dem molecule infile infile_sphere
+fix            1 all rigid/ls/dem molecule infile infile_sphere gravity grav exclude/gravity grain2
+
+#fix             1 grain1 rigid/ls/dem molecule infile infile_sphere gravity grav
+#fix             2 grain2 rigid/ls/dem molecule infile infile_sphere
 
 
 pair_style ls/dem 1.0
 # pair_coeff * * kn kt mu etan etat knp cut kn1 etan1 kt1 etat1
 pair_coeff * * 1.0e7 0 0 0 0 0 1.0 0 0 0 0
+neighbor 0.25 bin
 
 thermo_style custom step
 timestep 1e-4
 
-thermo 1000
-run 1000
+#thermo 1000
+#run 1000
 
 thermo 1000
 dump mydump grain1 custom 10 atomDump_sphere_100 id type mol x y z vx vy vz fx fy fz

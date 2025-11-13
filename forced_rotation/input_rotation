@@ -1,0 +1,57 @@
+units si
+dimension 3
+boundary p p p
+atom_style sphere
+# below cutoff was 12.0
+comm_modify vel yes
+atom_modify map yes
+newton off
+
+region		box block -50 50 -50 50 -50 50 units box
+create_box 	1 box
+
+fix			0 all property/atom mol ghost yes
+
+# Loading the nodes
+read_data	nodes_sphere_100 add 0 1 shift 0.0 0.0 1.5
+
+
+# Disable internal interactions
+neigh_modify   exclude molecule/intra all
+
+# fix rigid performs NVE integration and updates angmom
+# fix rigid LSDEM does not compute angmom dynamically from atom velocities
+# angmom must be given in the infile to create an initial rotational velocity
+# We set lz = inertia in infile to that angular velocity is 1 rad / time unit
+variable period equal "2 * PI"
+variable xvel atom "(y - 0.0) * v_period"
+variable yvel atom "(x - 0.0) * v_period"
+
+# Apply LS-DEM fix and apply gravity fix
+# Initial velocities are given in the infile
+fix			lsfix all rigid/ls/dem molecule infile file_sphere
+
+# Contact model 
+pair_style 	ls/dem 1.0
+# Contact model parameters and constants
+# pair_coeff type type kn kt mu etan etat knp cut kn1 etan1 kt1 etat1
+pair_coeff 	* * 1.0e7 0 0 0 0 0 1.0 0 0 0 0
+
+fix 3 all setforce 0.0 0.0 0.0
+# We *NEED* a fix setorque or extension of setforce for extended atoms !!!
+# Otherwise, the torques from pair ls/dem will rotate the grain
+# even if we call fix move as below after fix rigid, it won't overwrite the atom velocity
+# because those are set by set_xv() from the angular momentum of the rigid body, which is update with the torque
+#fix 4 all move rotate 0.0 0.0 1.5 0.0 0.0 1.0 ${period} # If this fix move is specified *after* fix rigid, it will overwrite positions from the NVE time integration inside fix rigid.
+
+# Neighbour list binning (0.25 times cut from pair_coeff)
+neighbor 0.25 bin
+
+thermo_style custom step
+timestep 1e-4
+
+thermo 1000
+dump mydump all custom 10 dump.lammpstrj id type mol x y z vx vy vz fx fy fz
+
+run 100000
+

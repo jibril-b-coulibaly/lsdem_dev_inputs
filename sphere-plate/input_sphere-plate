@@ -1,0 +1,60 @@
+units si
+dimension 3
+boundary p p p
+atom_style sphere
+comm_modify vel yes
+atom_modify map yes
+newton off
+
+region		box block -50 50 -50 50 -50 50 units box
+create_box 	1 box
+
+fix			0 all property/atom mol ghost yes
+
+# Set number of nodes
+variable N equal 100
+
+# Loading the nodes
+read_data	nodes_sphere_${N} add 0 1 shift 0.0 0.0 1.5
+read_data	nodes_plate_${N} add ${N} 2 shift 0.0 0.0 -0.5
+
+# Defining the objects as collections of nodes
+group		grain1 molecule 1
+group		grain2 molecule 2
+
+# Gravity force
+group 		nothing empty
+fix 		grav nothing gravity 9.81 vector 0 0 -1
+
+# Immobilise bottom object
+fix 		immob grain2 freeze
+
+# Disable internal interactions
+neigh_modify   exclude molecule/intra all
+
+# Apply LS-DEM fix and apply gravity fix
+# Initial velocities are given in the infile
+fix			lsfix all rigid/ls/dem molecule infile fixfile_sphere-plate gravity grav exclude/gravity grain2
+
+# Contact model 
+pair_style 	ls/dem 1.0
+# Contact model parameters and constants
+# pair_coeff type type kn kt mu etan etat knp cut kn1 etan1 kt1 etat1
+pair_coeff 	* * 1.0e7 0 0 0 0 0 1.0 0 0 0 0
+
+# Neighbour list binning (0.25 times cut from pair_coeff)
+neighbor 0.25 bin
+
+thermo_style custom step
+timestep 1e-4
+thermo 1000
+
+# LAMMPS allow to get the column of a global array with array[col] but not the row, so we must print all values by hand
+# x y z vx vy vz fx fy fz tx ty tz
+fix 	printer all print 10 "$(step) $(f_lsfix[1][1]) $(f_lsfix[1][2]) $(f_lsfix[1][3]) $(f_lsfix[1][4]) $(f_lsfix[1][5]) $(f_lsfix[1][6]) $(f_lsfix[1][7]) $(f_lsfix[1][8]) $(f_lsfix[1][9]) $(f_lsfix[1][10]) $(f_lsfix[1][11]) $(f_lsfix[1][12])" file dump_grain_bounce_${N}.txt screen no
+
+#dump mydump grain1 custom 10 dump_grain_bounce_${N} id type mol x y z vx vy vz fx fy fz
+
+run 50000
+
+# End of file
