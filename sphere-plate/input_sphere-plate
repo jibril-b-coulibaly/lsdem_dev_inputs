@@ -12,7 +12,7 @@ create_box 	1 box
 fix			0 all property/atom mol ghost yes
 
 # Set number of nodes
-variable N equal 100
+variable N equal 800
 
 # Loading the nodes
 read_data	nodes_sphere_${N} add 0 1 shift 0.0 0.0 1.5
@@ -40,10 +40,10 @@ fix			lsfix all rigid/ls/dem molecule infile fixfile_sphere-plate gravity grav e
 pair_style 	ls/dem 1.0
 # Contact model parameters and constants
 # pair_coeff type type kn kt mu etan etat knp cut kn1 etan1 kt1 etat1
-pair_coeff 	* * 1.0e7 0 0 0 0 0 1.0 0 0 0 0
+pair_coeff 	* * 1.0e8 0 0 2.0e5 0 0 1.0 0 0 0 0
 
-# Neighbour list binning (0.25 times cut from pair_coeff)
-neighbor 0.25 bin
+# Neighbour list binning (0.2 times cut from pair_coeff)
+neighbor 0.2 bin
 
 thermo_style custom step
 timestep 1e-4
