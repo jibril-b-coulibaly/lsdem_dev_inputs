@@ -1,8 +1,8 @@
-LAMMPS (19 Nov 2024 - Development - patch_19Nov2024-193-g68b9a1db26-modified)
+LAMMPS (10 Sep 2025 - Development - patch_10Sep2025-802-gea5a21d6d6-modified)
 units lj
 dimension 2
 boundary p p p
-atom_style sphere
+atom_style ls/dem
 comm_modify vel yes cutoff 12.0
 atom_modify map yes
 newton off
@@ -12,80 +12,56 @@ create_box         1 box
 Created orthogonal box = (-10 -10 -0.5) to (10 10 0.5)
   1 by 1 by 1 MPI processor grid
 
-fix             0 all property/atom mol ghost yes
+molecule        square square.mol
+Read molecule template square:
+# Square molecule
+  1 molecules
+  0 fragments
+  0 bodies
+  1 lsdem
+  36 atoms with max type 1
+  0 bonds with max type 0
+  0 angles with max type 0
+  0 dihedrals with max type 0
+  0 impropers with max type 0
+#create_atoms    0 single -9.5 1.0 0.0 mol square 51432 #rotate 10 0 0 1 #overlap 1.0
+create_atoms    0 random 4 25435 box mol square 64245 overlap 1.0 rotate 0 0 0 1
+Created 144 atoms
+  using lattice units in orthogonal box = (-10 -10 -0.5) to (10 10 0.5)
+  create_atoms CPU = 0.004 seconds
 
-read_data data_square add 0 1 shift -5.5 0.0 0.0
-Reading data file ...
-  orthogonal box = (-10 -10 -0.5) to (10 10 0.5)
-  1 by 1 by 1 MPI processor grid
-  reading atoms ...
-  36 atoms
-  read_data CPU = 0.008 seconds
-read_data data_square add 40 2 shift +5.5 0.0 0.0
-Reading data file ...
-  orthogonal box = (-10 -10 -0.5) to (10 10 0.5)
-  1 by 1 by 1 MPI processor grid
-  reading atoms ...
-  36 atoms
-  read_data CPU = 0.003 seconds
-read_data data_square add 80 3 shift 0.0 +5.5 0.0
-Reading data file ...
-  orthogonal box = (-10 -10 -0.5) to (10 10 0.5)
-  1 by 1 by 1 MPI processor grid
-  reading atoms ...
-  36 atoms
-  read_data CPU = 0.003 seconds
-read_data data_square add 120 4 shift 0.0 -5.5 0.0
-Reading data file ...
-  orthogonal box = (-10 -10 -0.5) to (10 10 0.5)
-  1 by 1 by 1 MPI processor grid
-  reading atoms ...
-  36 atoms
-  read_data CPU = 0.003 seconds
+mass 1 1.0
 
-group           grain1 molecule 1
-36 atoms in group grain1
-group           grain2 molecule 2
-36 atoms in group grain2
-group           grain3 molecule 3
-36 atoms in group grain3
-group           grain4 molecule 4
-36 atoms in group grain4
+group g1 molecule 1
+36 atoms in group g1
+group g2 molecule 2
+36 atoms in group g2
 
-# rotate grain1 by 25 degrees
-#displace_atoms grain1 rotate -3 0 0 0 0 1 45.0
-  #displace_atoms grain2 rotate +3 0 0 0 0 1 45.0
-  #displace_atoms grain2 rotate -3 0 0 0 0 1 45.0
-#displace_atoms grain2 move 0.0 -2.0 0.0
-# shift grain1 by 1 unit
-# displace_atoms grain1 move 0.0 -1.0 0.0
-
-# Velocity overwritten by fix rigid. Initial velocity given in infile_square
-# velocity        grain1 set 0.1 0.0 0.0
-# velocity        grain3 set 0.05 0.05 0.0
+velocity g1 set 0.01 0.03 0
+velocity g2 set 0.05 0.02 0
 
 neigh_modify   exclude molecule/intra all
 
-fix             1 all rigid/ls/dem molecule infile infile_square
+fix             1 all rigid/small/ls/dem molecule
+Fix rigid/small/ls/dem setup ...
+  create bodies CPU = 0.005 seconds
   4 rigid bodies with 144 atoms
+  4.0445055 = max distance from body owner to body atom
 fix             2 all enforce2d
 
 
 pair_style ls/dem 1.0
-pair_coeff * * 1.0 0.5 0.1 1.0 0.1
+pair_coeff * * 1.0 0.5 0.1 0 0 0 1.0 0 0 0 0
 
 thermo_style custom step
 timestep 0.1
 
-thermo 1000
-run 500
+thermo 100
+dump mydump all custom 100 atomDump_square id type mol x y vx vy fx fy
+
+thermo_modify lost ignore
+run 50000 #2300
 Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
-Reading rigid body data for 4 bodies from file infile_square
-Reading ls/dem grid data for body 0 from file grid_square.txt
-Reading ls/dem grid data for body 1 from file grid_square.txt
-Reading ls/dem grid data for body 2 from file grid_square.txt
-Reading ls/dem grid data for body 3 from file grid_square.txt
-Reading ls/dem grid data for body -1 from file grid_square.txt
 Neighbor list info ...
   update: every = 1 steps, delay = 0 steps, check = yes
   max neighbors/atom: 2000, page size: 100000
@@ -98,44 +74,17 @@ Neighbor list info ...
       pair build: half/bin/ghost/newtoff
       stencil: full/ghost/bin/2d
       bin: standard
-Per MPI rank memory allocation (min/avg/max) = 6.803 | 6.803 | 6.803 Mbytes
+Reading ls/dem grid data for body 0 from file grid_square.txt
+Reading ls/dem grid data for body 1 from file grid_square.txt
+Reading ls/dem grid data for body 2 from file grid_square.txt
+Reading ls/dem grid data for body 3 from file grid_square.txt
+Per MPI rank memory allocation (min/avg/max) = 12.27 | 12.27 | 12.27 Mbytes
    Step    
          0 
-       500 
-Loop time of 0.0183869 on 1 procs for 500 steps with 144 atoms
-
-Performance: 234949882.797 tau/day, 27193.273 timesteps/s, 3.916 Matom-step/s
-48.7% CPU use with 1 MPI tasks x no OpenMP threads
-
-MPI task timing breakdown:
-Section |  min time  |  avg time  |  max time  |%varavg| %total
----------------------------------------------------------------
-Pair    | 0.001654   | 0.001654   | 0.001654   |   0.0 |  9.00
-Neigh   | 0.0047097  | 0.0047097  | 0.0047097  |   0.0 | 25.61
-Comm    | 0.0062007  | 0.0062007  | 0.0062007  |   0.0 | 33.72
-Output  | 3.88e-05   | 3.88e-05   | 3.88e-05   |   0.0 |  0.21
-Modify  | 0.0054822  | 0.0054822  | 0.0054822  |   0.0 | 29.82
-Other   |            | 0.0003015  |            |       |  1.64
-
-Nlocal:            144 ave         144 max         144 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:            752 ave         752 max         752 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-Neighs:              0 ave           0 max           0 min
-Histogram: 1 0 0 0 0 0 0 0 0 0
-
-Total # of neighbors = 0
-Ave neighs/atom = 0
-Neighbor list builds = 31
-Dangerous builds = 0
-
-thermo 100
-dump mydump all custom 100 atomDump_square id type mol x y vx vy fx fy
-
-run 50000
-Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
-Per MPI rank memory allocation (min/avg/max) = 6.803 | 6.803 | 6.803 Mbytes
-   Step    
+       100 
+       200 
+       300 
+       400 
        500 
        600 
        700 
@@ -632,36 +581,32 @@ Per MPI rank memory allocation (min/avg/max) = 6.803 | 6.803 | 6.803 Mbytes
      49800 
      49900 
      50000 
-     50100 
-     50200 
-     50300 
-     50400 
-     50500 
-Loop time of 2.67828 on 1 procs for 50000 steps with 144 atoms
+Loop time of 39.9815 on 1 procs for 50000 steps with 144 atoms
 
-Performance: 161297374.644 tau/day, 18668.678 timesteps/s, 2.688 Matom-step/s
-86.3% CPU use with 1 MPI tasks x no OpenMP threads
+Performance: 10804996.668 tau/day, 1250.578 timesteps/s, 180.083 katom-step/s
+56.8% CPU use with 1 MPI tasks x no OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 0.31071    | 0.31071    | 0.31071    |   0.0 | 11.60
-Neigh   | 0.74663    | 0.74663    | 0.74663    |   0.0 | 27.88
-Comm    | 0.59924    | 0.59924    | 0.59924    |   0.0 | 22.37
-Output  | 0.46541    | 0.46541    | 0.46541    |   0.0 | 17.38
-Modify  | 0.5243     | 0.5243     | 0.5243     |   0.0 | 19.58
-Other   |            | 0.03199    |            |       |  1.19
+Pair    | 2.9236     | 2.9236     | 2.9236     |   0.0 |  7.31
+Neigh   | 2.3076     | 2.3076     | 2.3076     |   0.0 |  5.77
+Comm    | 6.5848     | 6.5848     | 6.5848     |   0.0 | 16.47
+Output  | 3.2696     | 3.2696     | 3.2696     |   0.0 |  8.18
+Modify  | 24.355     | 24.355     | 24.355     |   0.0 | 60.92
+Other   |            | 0.5409     |            |       |  1.35
 
 Nlocal:            144 ave         144 max         144 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:            528 ave         528 max         528 min
+Nghost:            556 ave         556 max         556 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-Neighs:              0 ave           0 max           0 min
+Neighs:              9 ave           9 max           9 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 
-Total # of neighbors = 0
-Ave neighs/atom = 0
-Neighbor list builds = 4884
+Total # of neighbors = 9
+Ave neighs/atom = 0.0625
+Neighbor list builds = 2269
 Dangerous builds = 0
-
-Total wall time: 0:00:02
+50000
+ERROR: Unknown command: 50000 (../input.cpp:315)
+Last input line: 50000

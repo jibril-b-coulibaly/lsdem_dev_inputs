@@ -89,4 +89,4 @@ with open("data_cube", "w") as f:
     f.write(f"{-halfside} {halfside} zlo zhi\n\n")
     f.write(f"Atoms\n\n")
     for i, (xi, yi, zi) in enumerate(zip(x, y, z)):
-        f.write(f"{i+1} 1 1 1.0 {xi} {yi} {zi}\n")
+        f.write(f"{i+1} 1 1 {xi} {yi} {zi}\n")

@@ -1,0 +1,49 @@
+units lj
+dimension 2
+boundary p p p
+atom_style ls/dem
+comm_modify vel yes cutoff 12.0
+atom_modify map yes
+newton off
+
+region             box block -10.5 10.5 -10.5 10.5 -0.5 0.5 units box
+create_box         1 box
+
+molecule  disk disk.mol
+
+create_atoms      0 single -5.5 0.001 0.0 mol disk 151432 rotate 0 0 0 1
+create_atoms      0 single +5.5 0.0 0.0 mol disk 151432 rotate 0 0 0 1
+create_atoms      0 single 0.0  5.5 0.0 mol disk 151432 rotate 0 0 0 1
+create_atoms      0 single 0.0 -5.5 0.0 mol disk 151432 rotate 0 0 0 1
+
+mass 1 1.0
+
+group           grain1 molecule 1
+group           grain2 molecule 2
+group           grain3 molecule 3
+group           grain4 molecule 4
+
+# Velocity overwritten by fix rigid. Initial velocity given in infile_disk
+velocity        grain1 set 0.10 0.0 0.0
+velocity        grain3 set 0.05 0.05 0.0
+
+neigh_modify   exclude molecule/intra all
+
+fix             1 all rigid/small/ls/dem molecule
+fix             2 all enforce2d
+
+
+pair_style ls/dem 1.0
+pair_coeff * * 1.0 0.5 0.1 0 0 0 1.0 0 0 0 0
+
+thermo_style custom step
+timestep 0.1
+
+
+thermo 100
+dump mydump all custom 100 atomDump_disk id type mol x y vx vy fx fy
+thermo 1
+run 15
+176
+50000
+

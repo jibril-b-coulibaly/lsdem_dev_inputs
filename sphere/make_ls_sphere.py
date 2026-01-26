@@ -184,6 +184,6 @@ with open(outfile, "w") as f:
     f.write(f"{-rad} {rad} zlo zhi\n\n")
     f.write("Atoms\n\n")
     for i, (xi, yi, zi) in enumerate(pts):
-        f.write(f"{i+1} 1 1 1.0 {xi} {yi} {zi}\n")
+        f.write(f"{i+1} 1 1 {xi} {yi} {zi}\n")
 
 print(f"Wrote {len(pts)} points to {outfile} using method='{method}'.")

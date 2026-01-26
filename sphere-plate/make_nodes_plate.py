@@ -7,7 +7,7 @@ import numpy as np
 L = 5.0*1.0 # 5 times the radius of the sphere
 T = 1.0*1.0 # 1 time the radius of the sphere
 # Number of points that we had for the sphere (to compute spacing)
-equivNumNodes = 100       
+equivNumNodes = 100
 # Spacing between nodes (edge length in HCP lattice). Last number is R.
 dist = np.sqrt( 8.0 * np.pi / (np.sqrt(3) * equivNumNodes) ) * 1.0 # Set such that area per node for plate and sphere are equal
 
@@ -102,7 +102,7 @@ with open(outfile, "w") as f:
     f.write(f"{-0.5*T} {0.5*T} zlo zhi\n\n")
     f.write("Atoms\n\n")
     for i, (xi, yi, zi) in enumerate(pts):
-        f.write(f"{i+1} 1 1 1.0 {xi} {yi} {zi}\n")
+        f.write(f"{i+1} 1 1 {xi} {yi} {zi}\n")
 
 print(f"Wrote {len(pts)} nodes for a plate with side length L = {L} and thickness T = {T} to {outfile} using a hexagonal lattice pattern.")
 
@@ -139,7 +139,7 @@ def plot_pts_3d(pts, show=True, save_path=None, marker='o', ms=4):
     #Quick 3D scatter of pts (N,3). Colours by z to help identify faces.
     #- pts: numpy array (N,3)
     #- save_path: optional filename (PNG) to save the figure
-    
+
     if pts.size == 0:
         raise ValueError("pts is empty")
 

@@ -4,7 +4,7 @@
 import numpy as np
 
 # Radius sphere
-rad = 1.0 
+rad = 1.0
 
 # Generate (near-)uniformly spaced points on a sphere and write them
 # to a LAMMPS-like data file "nodes_sphere_numNodes".
@@ -43,7 +43,7 @@ with open(outfile, "w") as f:
     f.write(f"{-rad} {rad} zlo zhi\n\n")
     f.write("Atoms\n\n")
     for i, (xi, yi, zi) in enumerate(pts):
-        f.write(f"{i+1} 1 1 1.0 {xi} {yi} {zi}\n")
+        f.write(f"{i+1} 1 1 {xi} {yi} {zi}\n")
 
 print(f"Wrote {len(pts)} nodes for a sphere with R = {rad} to {outfile} using a Fibonacci sequence.")
 

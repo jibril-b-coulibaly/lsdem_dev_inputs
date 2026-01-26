@@ -1,7 +1,7 @@
 units si
 dimension 3
 boundary p p p
-atom_style sphere
+atom_style ls/dem
 # below cutoff was 1.0
 comm_modify vel yes
 atom_modify map yes
@@ -13,7 +13,9 @@ region             box block 0 4 0 4 0 4
 create_box         1 box
 
 molecule        mymol mol_sphere_512
-fix             0 all property/atom mol ghost yes
+
+mass            1 1.0
+
 create_atoms    0 box mol mymol 1234 rotate 0 0 0 1
 
 
@@ -44,6 +46,6 @@ variable tot_strain equal 0.20 # target strain (20%)
 # --- Apply compression along z (positive engineering strain) ---
 # remap x : atom positions are rescaled with the box (typical for homogeneous strain)
 fix 2 all deform 1 z erate $(-v_erate) units box remap v
-run 10
+run 0
 
 

@@ -1,4 +1,4 @@
-LAMMPS (10 Sep 2025 - Development - patch_10Sep2025-800-gfd046c3b2f-modified)
+LAMMPS (10 Sep 2025 - Development - patch_10Sep2025-801-g2ed8d3eeb3-modified)
 units lj
 dimension 2
 boundary p p p
@@ -28,15 +28,15 @@ Read molecule template disk:
 create_atoms      0 single -5.5 0.001 0.0 mol disk 151432 rotate 0 0 0 1
 Created 40 atoms
   using lattice units in orthogonal box = (-10.5 -10.5 -0.5) to (10.5 10.5 0.5)
-  create_atoms CPU = 0.001 seconds
+  create_atoms CPU = 0.038 seconds
 create_atoms      0 single +5.5 0.0 0.0 mol disk 151432 rotate 0 0 0 1
 Created 40 atoms
   using lattice units in orthogonal box = (-10.5 -10.5 -0.5) to (10.5 10.5 0.5)
-  create_atoms CPU = 0.000 seconds
+  create_atoms CPU = 0.001 seconds
 create_atoms      0 single 0.0  5.5 0.0 mol disk 151432 rotate 0 0 0 1
 Created 40 atoms
   using lattice units in orthogonal box = (-10.5 -10.5 -0.5) to (10.5 10.5 0.5)
-  create_atoms CPU = 0.000 seconds
+  create_atoms CPU = 0.001 seconds
 create_atoms      0 single 0.0 -5.5 0.0 mol disk 151432 rotate 0 0 0 1
 Created 40 atoms
   using lattice units in orthogonal box = (-10.5 -10.5 -0.5) to (10.5 10.5 0.5)
@@ -61,7 +61,7 @@ neigh_modify   exclude molecule/intra all
 
 fix             1 all rigid/small/ls/dem molecule
 Fix rigid/small/ls/dem setup ...
-  create bodies CPU = 0.000 seconds
+  create bodies CPU = 0.029 seconds
   4 rigid bodies with 160 atoms
   4.9999991 = max distance from body owner to body atom
 fix             2 all enforce2d
@@ -95,7 +95,7 @@ Reading ls/dem grid data for body 0 from file grid_disk.txt
 Reading ls/dem grid data for body 1 from file grid_disk.txt
 Reading ls/dem grid data for body 2 from file grid_disk.txt
 Reading ls/dem grid data for body 3 from file grid_disk.txt
-Per MPI rank memory allocation (min/avg/max) = 12.07 | 12.07 | 12.07 Mbytes
+Per MPI rank memory allocation (min/avg/max) = 12.32 | 12.32 | 12.32 Mbytes
    Step    
          0 
        100 
@@ -598,20 +598,20 @@ Per MPI rank memory allocation (min/avg/max) = 12.07 | 12.07 | 12.07 Mbytes
      49800 
      49900 
      50000 
-Loop time of 2.7197 on 1 procs for 50000 steps with 160 atoms
+Loop time of 51.3084 on 1 procs for 50000 steps with 160 atoms
 
-Performance: 158841078.957 tau/day, 18384.384 timesteps/s, 2.942 Matom-step/s
-86.6% CPU use with 1 MPI tasks x no OpenMP threads
+Performance: 8419679.456 tau/day, 974.500 timesteps/s, 155.920 katom-step/s
+98.6% CPU use with 1 MPI tasks x no OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 0.47989    | 0.47989    | 0.47989    |   0.0 | 17.65
-Neigh   | 0.40417    | 0.40417    | 0.40417    |   0.0 | 14.86
-Comm    | 0.80009    | 0.80009    | 0.80009    |   0.0 | 29.42
-Output  | 0.4886     | 0.4886     | 0.4886     |   0.0 | 17.97
-Modify  | 0.50643    | 0.50643    | 0.50643    |   0.0 | 18.62
-Other   |            | 0.04052    |            |       |  1.49
+Pair    | 9.3924     | 9.3924     | 9.3924     |   0.0 | 18.31
+Neigh   | 7.1429     | 7.1429     | 7.1429     |   0.0 | 13.92
+Comm    | 16.991     | 16.991     | 16.991     |   0.0 | 33.12
+Output  | 4.6259     | 4.6259     | 4.6259     |   0.0 |  9.02
+Modify  | 11.934     | 11.934     | 11.934     |   0.0 | 23.26
+Other   |            | 1.222      |            |       |  2.38
 
 Nlocal:            160 ave         160 max         160 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
@@ -624,3 +624,5 @@ Total # of neighbors = 26
 Ave neighs/atom = 0.1625
 Neighbor list builds = 2695
 Dangerous builds = 0
+
+Total wall time: 0:00:53

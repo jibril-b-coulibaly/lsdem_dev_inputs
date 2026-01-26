@@ -1,4 +1,4 @@
-LAMMPS (10 Sep 2025 - Development - patch_10Sep2025-800-gfd046c3b2f-modified)
+LAMMPS (10 Sep 2025 - Development - patch_10Sep2025-801-g2ed8d3eeb3-modified)
 units lj
 dimension 2
 boundary p p p
@@ -28,11 +28,11 @@ Read molecule template disk:
 create_atoms      0 single -5.5 0.001 0.0 mol disk 151432 rotate 0 0 0 1
 Created 40 atoms
   using lattice units in orthogonal box = (-10.5 -10.5 -0.5) to (10.5 10.5 0.5)
-  create_atoms CPU = 0.000 seconds
+  create_atoms CPU = 0.037 seconds
 create_atoms      0 single +5.5 0.0 0.0 mol disk 151432 rotate 0 0 0 1
 Created 40 atoms
   using lattice units in orthogonal box = (-10.5 -10.5 -0.5) to (10.5 10.5 0.5)
-  create_atoms CPU = 0.000 seconds
+  create_atoms CPU = 0.001 seconds
 create_atoms      0 single 0.0  5.5 0.0 mol disk 151432 rotate 0 0 0 1
 Created 40 atoms
   using lattice units in orthogonal box = (-10.5 -10.5 -0.5) to (10.5 10.5 0.5)
@@ -61,7 +61,7 @@ neigh_modify   exclude molecule/intra all
 
 fix             1 all rigid/small/ls/dem molecule
 Fix rigid/small/ls/dem setup ...
-  create bodies CPU = 0.000 seconds
+  create bodies CPU = 0.028 seconds
   4 rigid bodies with 160 atoms
   4.9999991 = max distance from body owner to body atom
 fix             2 all enforce2d
@@ -598,20 +598,20 @@ Per MPI rank memory allocation (min/avg/max) = 11.69 | 11.69 | 11.69 Mbytes
      49800 
      49900 
      50000 
-Loop time of 2.5727 on 1 procs for 50000 steps with 160 atoms
+Loop time of 47.3812 on 1 procs for 50000 steps with 160 atoms
 
-Performance: 167917187.422 tau/day, 19434.860 timesteps/s, 3.110 Matom-step/s
-85.4% CPU use with 1 MPI tasks x no OpenMP threads
+Performance: 9117548.458 tau/day, 1055.272 timesteps/s, 168.843 katom-step/s
+98.4% CPU use with 1 MPI tasks x no OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 0.46241    | 0.46241    | 0.46241    |   0.0 | 17.97
-Neigh   | 0.39695    | 0.39695    | 0.39695    |   0.0 | 15.43
-Comm    | 0.67976    | 0.67976    | 0.67976    |   0.0 | 26.42
-Output  | 0.49393    | 0.49393    | 0.49393    |   0.0 | 19.20
-Modify  | 0.50207    | 0.50207    | 0.50207    |   0.0 | 19.52
-Other   |            | 0.03758    |            |       |  1.46
+Pair    | 8.9861     | 8.9861     | 8.9861     |   0.0 | 18.97
+Neigh   | 7.0675     | 7.0675     | 7.0675     |   0.0 | 14.92
+Comm    | 13.087     | 13.087     | 13.087     |   0.0 | 27.62
+Output  | 5.2195     | 5.2195     | 5.2195     |   0.0 | 11.02
+Modify  | 11.821     | 11.821     | 11.821     |   0.0 | 24.95
+Other   |            | 1.2        |            |       |  2.53
 
 Nlocal:            160 ave         160 max         160 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
@@ -624,5 +624,3 @@ Total # of neighbors = 51
 Ave neighs/atom = 0.31875
 Neighbor list builds = 2649
 Dangerous builds = 0
-
-Total wall time: 0:00:02

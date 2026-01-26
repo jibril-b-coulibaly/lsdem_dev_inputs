@@ -48,7 +48,7 @@ y = np.zeros(num_atoms)
 # (There must be a smarter way than building larger arrays at take [:-1], e.g. using np.arange())
 xedge = np.linspace(-halfside, halfside, num_atoms_per_side)[:-1]
 yedge = -halfside
-for i, angle in enumerate(np.linspace(0.0, 2*np.pi, 5)[:-1]):    
+for i, angle in enumerate(np.linspace(0.0, 2*np.pi, 5)[:-1]):
     x[i*(num_atoms_per_side-1):(i+1)*(num_atoms_per_side-1)] = np.cos(angle) * xedge - np.sin(angle) * yedge
     y[i*(num_atoms_per_side-1):(i+1)*(num_atoms_per_side-1)] = np.sin(angle) * xedge + np.cos(angle) * yedge
 
@@ -62,4 +62,4 @@ with open("data_square", "w") as f:
     f.write(f"{-stride} {stride} zlo zhi\n\n")
     f.write(f"Atoms\n\n")
     for i, (xi, yi) in enumerate(zip(x, y)):
-        f.write(f"{i+1} 1 1 1.0 {xi} {yi} 0.0\n")
+        f.write(f"{i+1} 1 1 {xi} {yi} 0.0\n")

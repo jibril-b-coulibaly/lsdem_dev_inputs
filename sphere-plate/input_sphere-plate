@@ -1,7 +1,7 @@
 units si
 dimension 3
 boundary p p p
-atom_style sphere
+atom_style ls/dem
 comm_modify vel yes
 atom_modify map yes
 newton off
@@ -9,14 +9,13 @@ newton off
 region		box block -50 50 -50 50 -50 50 units box
 create_box 	1 box
 
-fix			0 all property/atom mol ghost yes
-
+mass 1 1.0
 # Set number of nodes
 variable N equal 800
 
 # Loading the nodes
-read_data	nodes_sphere_${N} add 0 1 shift 0.0 0.0 1.5
-read_data	nodes_plate_${N} add ${N} 2 shift 0.0 0.0 -0.5
+read_data	nodes_sphere_${N} add 0 0 shift 0.0 0.0 1.5
+read_data	nodes_plate_${N} add ${N} 1 shift 0.0 0.0 -0.5
 
 # Defining the objects as collections of nodes
 group		grain1 molecule 1
@@ -36,7 +35,7 @@ neigh_modify   exclude molecule/intra all
 # Initial velocities are given in the infile
 fix			lsfix all rigid/ls/dem molecule infile fixfile_sphere-plate gravity grav exclude/gravity grain2
 
-# Contact model 
+# Contact model
 pair_style 	ls/dem 1.0
 # Contact model parameters and constants
 # pair_coeff type type kn kt mu etan etat knp cut kn1 etan1 kt1 etat1

@@ -1,7 +1,7 @@
 units si
 dimension 3
 boundary p p p
-atom_style sphere
+atom_style ls/dem
 # below cutoff was 1.0
 comm_modify vel yes cutoff 1.0
 atom_modify map yes
@@ -11,7 +11,7 @@ newton off
 region             box block 0 1.35764501988 0 1.35764501988 0 1.35764501988 units box
 create_box         1 box
 
-fix             0 all property/atom mol ghost yes
+mass          1 1.0
 
 # Command filename add number_atoms mol_id shift posx posy posz
 read_data data_sphere_512 add 0 1 shift 0.000000 0.000000 0.000000
