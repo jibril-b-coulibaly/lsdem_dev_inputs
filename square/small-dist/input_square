@@ -36,7 +36,12 @@ timestep 0.1
 thermo 100
 run 500
 
+thermo 1
 dump mydump all custom 100 atomDump_square id type mol x y vx vy fx fy
 
 run 50000
+ 400
+149
+400 
+50000
 

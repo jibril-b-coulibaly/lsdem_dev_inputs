@@ -1,4 +1,4 @@
-LAMMPS (10 Sep 2025 - Development - patch_10Sep2025-802-gea5a21d6d6-modified)
+LAMMPS (10 Sep 2025 - Development - patch_10Sep2025-805-g1ec64a6e3e-modified)
 units lj
 dimension 2
 boundary p p p
@@ -18,28 +18,28 @@ Reading data file ...
   1 by 1 by 1 MPI processor grid
   reading atoms ...
   36 atoms
-  read_data CPU = 0.003 seconds
+  read_data CPU = 0.004 seconds
 read_data data_square add 40 1 shift +5.5 0.0 0.0
 Reading data file ...
   orthogonal box = (-10 -10 -0.5) to (10 10 0.5)
   1 by 1 by 1 MPI processor grid
   reading atoms ...
   36 atoms
-  read_data CPU = 0.003 seconds
+  read_data CPU = 0.005 seconds
 read_data data_square add 80 2 shift 0.0 +5.5 0.0
 Reading data file ...
   orthogonal box = (-10 -10 -0.5) to (10 10 0.5)
   1 by 1 by 1 MPI processor grid
   reading atoms ...
   36 atoms
-  read_data CPU = 0.003 seconds
+  read_data CPU = 0.005 seconds
 read_data data_square add 120 3 shift 0.0 -5.5 0.0
 Reading data file ...
   orthogonal box = (-10 -10 -0.5) to (10 10 0.5)
   1 by 1 by 1 MPI processor grid
   reading atoms ...
   36 atoms
-  read_data CPU = 0.003 seconds
+  read_data CPU = 0.004 seconds
 
 group           grain1 molecule 1
 36 atoms in group grain1
@@ -56,7 +56,7 @@ neigh_modify   exclude molecule/intra all
 
 fix             1 all rigid/small/ls/dem molecule infile infile_square
 Fix rigid/small/ls/dem setup ...
-  create bodies CPU = 0.004 seconds
+  create bodies CPU = 0.005 seconds
   4 rigid bodies with 144 atoms
   4.0445055 = max distance from body owner to body atom
 fix             2 all enforce2d
@@ -88,24 +88,24 @@ Reading ls/dem grid data for body 0 from file grid_square.txt
 Reading ls/dem grid data for body 1 from file grid_square.txt
 Reading ls/dem grid data for body 2 from file grid_square.txt
 Reading ls/dem grid data for body 3 from file grid_square.txt
-Per MPI rank memory allocation (min/avg/max) = 11.75 | 11.75 | 11.75 Mbytes
+Per MPI rank memory allocation (min/avg/max) = 12.07 | 12.07 | 12.07 Mbytes
    Step    
          0 
        500 
-Loop time of 0.0787461 on 1 procs for 500 steps with 144 atoms
+Loop time of 0.110448 on 1 procs for 500 steps with 144 atoms
 
-Performance: 54859861.816 tau/day, 6349.521 timesteps/s, 914.331 katom-step/s
-39.6% CPU use with 1 MPI tasks x no OpenMP threads
+Performance: 39113560.328 tau/day, 4527.032 timesteps/s, 651.893 katom-step/s
+39.8% CPU use with 1 MPI tasks x no OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 0.0030658  | 0.0030658  | 0.0030658  |   0.0 |  3.89
-Neigh   | 0.0067999  | 0.0067999  | 0.0067999  |   0.0 |  8.64
-Comm    | 0.013019   | 0.013019   | 0.013019   |   0.0 | 16.53
-Output  | 2.9e-05    | 2.9e-05    | 2.9e-05    |   0.0 |  0.04
-Modify  | 0.054909   | 0.054909   | 0.054909   |   0.0 | 69.73
-Other   |            | 0.0009236  |            |       |  1.17
+Pair    | 0.0044116  | 0.0044116  | 0.0044116  |   0.0 |  3.99
+Neigh   | 0.011187   | 0.011187   | 0.011187   |   0.0 | 10.13
+Comm    | 0.019411   | 0.019411   | 0.019411   |   0.0 | 17.57
+Output  | 1e-05      | 1e-05      | 1e-05      |   0.0 |  0.01
+Modify  | 0.074035   | 0.074035   | 0.074035   |   0.0 | 67.03
+Other   |            | 0.001393   |            |       |  1.26
 
 Nlocal:            144 ave         144 max         144 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
@@ -124,7 +124,7 @@ dump mydump all custom 100 atomDump_square id type mol x y vx vy fx fy
 
 run 50000
 Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
-Per MPI rank memory allocation (min/avg/max) = 11.75 | 11.75 | 11.75 Mbytes
+Per MPI rank memory allocation (min/avg/max) = 12.07 | 12.07 | 12.07 Mbytes
    Step    
        500 
        600 
@@ -627,31 +627,31 @@ Per MPI rank memory allocation (min/avg/max) = 11.75 | 11.75 | 11.75 Mbytes
      50300 
      50400 
      50500 
-Loop time of 7.72937 on 1 procs for 50000 steps with 144 atoms
+Loop time of 9.30247 on 1 procs for 50000 steps with 144 atoms
 
-Performance: 55890717.410 tau/day, 6468.833 timesteps/s, 931.512 katom-step/s
-52.1% CPU use with 1 MPI tasks x no OpenMP threads
+Performance: 46439282.789 tau/day, 5374.917 timesteps/s, 773.988 katom-step/s
+53.8% CPU use with 1 MPI tasks x no OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 0.57791    | 0.57791    | 0.57791    |   0.0 |  7.48
-Neigh   | 0.60865    | 0.60865    | 0.60865    |   0.0 |  7.87
-Comm    | 1.0936     | 1.0936     | 1.0936     |   0.0 | 14.15
-Output  | 0.39887    | 0.39887    | 0.39887    |   0.0 |  5.16
-Modify  | 4.956      | 4.956      | 4.956      |   0.0 | 64.12
-Other   |            | 0.09435    |            |       |  1.22
+Pair    | 0.76938    | 0.76938    | 0.76938    |   0.0 |  8.27
+Neigh   | 0.71261    | 0.71261    | 0.71261    |   0.0 |  7.66
+Comm    | 1.239      | 1.239      | 1.239      |   0.0 | 13.32
+Output  | 0.51101    | 0.51101    | 0.51101    |   0.0 |  5.49
+Modify  | 5.9507     | 5.9507     | 5.9507     |   0.0 | 63.97
+Other   |            | 0.1197     |            |       |  1.29
 
 Nlocal:            144 ave         144 max         144 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:            492 ave         492 max         492 min
+Nghost:            458 ave         458 max         458 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-Neighs:             39 ave          39 max          39 min
+Neighs:              0 ave           0 max           0 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 
-Total # of neighbors = 39
-Ave neighs/atom = 0.27083333
-Neighbor list builds = 3175
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 3106
 Dangerous builds = 0
 
-Total wall time: 0:00:07
+Total wall time: 0:00:09

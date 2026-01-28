@@ -1,4 +1,4 @@
-LAMMPS (10 Sep 2025 - Development - patch_10Sep2025-804-g803fda9b06-modified)
+LAMMPS (10 Sep 2025 - Development - patch_10Sep2025-805-g1ec64a6e3e-modified)
 units lj
 dimension 2
 boundary p p p
@@ -18,28 +18,28 @@ Reading data file ...
   1 by 1 by 1 MPI processor grid
   reading atoms ...
   36 atoms
-  read_data CPU = 0.780 seconds
+  read_data CPU = 0.003 seconds
 read_data data_square add 36 1 shift +5.5 0.0 0.0
 Reading data file ...
   orthogonal box = (-10 -10 -0.5) to (10 10 0.5)
   1 by 1 by 1 MPI processor grid
   reading atoms ...
   36 atoms
-  read_data CPU = 0.058 seconds
+  read_data CPU = 0.003 seconds
 read_data data_square add 72 2 shift 0.0 +5.5 0.0
 Reading data file ...
   orthogonal box = (-10 -10 -0.5) to (10 10 0.5)
   1 by 1 by 1 MPI processor grid
   reading atoms ...
   36 atoms
-  read_data CPU = 0.060 seconds
+  read_data CPU = 0.003 seconds
 read_data data_square add 108 3 shift 0.0 -5.5 0.0
 Reading data file ...
   orthogonal box = (-10 -10 -0.5) to (10 10 0.5)
   1 by 1 by 1 MPI processor grid
   reading atoms ...
   36 atoms
-  read_data CPU = 0.064 seconds
+  read_data CPU = 0.003 seconds
 
 group           grain1 molecule 1
 36 atoms in group grain1
@@ -65,7 +65,7 @@ pair_coeff * * 1.0 0.5 0.1 0 0 0 1.0 0 0 0 0
 thermo_style custom step
 timestep 0.1
 
-thermo 1000
+thermo 100
 run 500
 Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
 Reading rigid body data for 4 bodies from file infile_square
@@ -88,21 +88,25 @@ Neighbor list info ...
 Per MPI rank memory allocation (min/avg/max) = 7.712 | 7.712 | 7.712 Mbytes
    Step    
          0 
+       100 
+       200 
+       300 
+       400 
        500 
-Loop time of 1.62718 on 1 procs for 500 steps with 144 atoms
+Loop time of 0.0212628 on 1 procs for 500 steps with 144 atoms
 
-Performance: 2654893.070 tau/day, 307.279 timesteps/s, 44.248 katom-step/s
-97.0% CPU use with 1 MPI tasks x no OpenMP threads
+Performance: 203171765.220 tau/day, 23515.251 timesteps/s, 3.386 Matom-step/s
+100.0% CPU use with 1 MPI tasks x no OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 0.13985    | 0.13985    | 0.13985    |   0.0 |  8.59
-Neigh   | 0.34576    | 0.34576    | 0.34576    |   0.0 | 21.25
-Comm    | 0.62912    | 0.62912    | 0.62912    |   0.0 | 38.66
-Output  | 0.0091795  | 0.0091795  | 0.0091795  |   0.0 |  0.56
-Modify  | 0.45346    | 0.45346    | 0.45346    |   0.0 | 27.87
-Other   |            | 0.04982    |            |       |  3.06
+Pair    | 0.0021477  | 0.0021477  | 0.0021477  |   0.0 | 10.10
+Neigh   | 0.0049547  | 0.0049547  | 0.0049547  |   0.0 | 23.30
+Comm    | 0.010278   | 0.010278   | 0.010278   |   0.0 | 48.34
+Output  | 0.0001872  | 0.0001872  | 0.0001872  |   0.0 |  0.88
+Modify  | 0.0032883  | 0.0032883  | 0.0032883  |   0.0 | 15.47
+Other   |            | 0.0004069  |            |       |  1.91
 
 Nlocal:            144 ave         144 max         144 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
@@ -624,20 +628,20 @@ Per MPI rank memory allocation (min/avg/max) = 7.713 | 7.713 | 7.713 Mbytes
      50300 
      50400 
      50500 
-Loop time of 161.349 on 1 procs for 50000 steps with 144 atoms
+Loop time of 3.03661 on 1 procs for 50000 steps with 144 atoms
 
-Performance: 2677432.675 tau/day, 309.888 timesteps/s, 44.624 katom-step/s
-96.8% CPU use with 1 MPI tasks x no OpenMP threads
+Performance: 142263687.767 tau/day, 16465.705 timesteps/s, 2.371 Matom-step/s
+75.8% CPU use with 1 MPI tasks x no OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 25.443     | 25.443     | 25.443     |   0.0 | 15.77
-Neigh   | 25.563     | 25.563     | 25.563     |   0.0 | 15.84
-Comm    | 53.53      | 53.53      | 53.53      |   0.0 | 33.18
-Output  | 10.831     | 10.831     | 10.831     |   0.0 |  6.71
-Modify  | 42.597     | 42.597     | 42.597     |   0.0 | 26.40
-Other   |            | 3.385      |            |       |  2.10
+Pair    | 0.86746    | 0.86746    | 0.86746    |   0.0 | 28.57
+Neigh   | 0.50615    | 0.50615    | 0.50615    |   0.0 | 16.67
+Comm    | 0.83681    | 0.83681    | 0.83681    |   0.0 | 27.56
+Output  | 0.45104    | 0.45104    | 0.45104    |   0.0 | 14.85
+Modify  | 0.33709    | 0.33709    | 0.33709    |   0.0 | 11.10
+Other   |            | 0.03808    |            |       |  1.25
 
 Nlocal:            144 ave         144 max         144 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
@@ -650,5 +654,6 @@ Total # of neighbors = 45
 Ave neighs/atom = 0.3125
 Neighbor list builds = 3044
 Dangerous builds = 0
-
-Total wall time: 0:02:50
+147
+ERROR: Unknown command: 147 (../input.cpp:315)
+Last input line: 147
