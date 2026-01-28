@@ -21,18 +21,7 @@ group           grain2 molecule 2
 group           grain3 molecule 3
 group           grain4 molecule 4
 
-# rotate grain1 by 25 degrees
-#displace_atoms grain1 rotate -3 0 0 0 0 1 45.0
-  #displace_atoms grain2 rotate +3 0 0 0 0 1 45.0
-  #displace_atoms grain2 rotate -3 0 0 0 0 1 45.0
-#displace_atoms grain2 move 0.0 -2.0 0.0
-# shift grain1 by 1 unit
-# displace_atoms grain1 move 0.0 -1.0 0.0
-
-# Velocity overwritten by fix rigid. Initial velocity given in infile_cube
-# velocity        grain1 set 0.1 0.0 0.0
-# velocity        grain3 set 0.05 0.05 0.0
-
+neighbor       2.0 bin
 neigh_modify   exclude molecule/intra all
 
 fix             1 all rigid/ls/dem molecule infile infile_cube

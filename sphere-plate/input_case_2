@@ -1,7 +1,7 @@
 units si
 dimension 3
 boundary p p p
-atom_style sphere
+atom_style ls/dem
 comm_modify vel yes
 atom_modify map yes
 newton off
@@ -9,7 +9,7 @@ newton off
 region		box block -50 50 -50 50 -50 50 units box
 create_box 	1 box
 
-fix			0 all property/atom mol ghost yes
+mass 1 1.0
 
 # Set number of nodes
 variable N equal 3200
