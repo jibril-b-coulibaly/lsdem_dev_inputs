@@ -1,5 +1,7 @@
 # Generated using make_ls_sphere.py (uniform sphere sampling)
 512 atoms
+1.0 mass
+grid_sphere.txt 0 1.0 lsdem
 
 Coords
 
