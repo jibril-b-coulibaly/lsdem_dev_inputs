@@ -1,0 +1,37 @@
+units lj
+dimension 3
+boundary p p p
+atom_style ls/dem
+comm_modify vel yes cutoff 1.8
+atom_modify map hash
+newton off
+
+region             box block -3 3 -3 3 -3 3 units box
+create_box         1 box
+
+molecule        spot spot.mol
+
+mass  1 1.0
+
+create_atoms    0 random 30 534534 box mol spot 51432 overlap 0.1
+
+neighbor       0.1 bin
+neigh_modify   exclude molecule/intra all
+
+fix             1 all rigid/small/ls/dem molecule
+fix             2 all deform 1 x trate -4e-4 y trate -4e-4 z trate -4e-4
+
+pair_style ls/dem 0.2
+pair_coeff * * 1.0 0.0 0.0 0.1 0.0 0.0 0.2
+
+thermo_style custom step press pxx pyy pzz lx ly lz
+timestep 0.1
+
+thermo 10
+dump 1 all custom 100 atomDump_spot id type mol x y z vx vy vz fx fy fz
+
+compute         1 all rigid/ls/dem/local 1 grid mol x y z net/quatw net/quati net/quatj net/quatk
+dump 2 all local 500 localDump index c_1[*]
+
+run 10000
+
