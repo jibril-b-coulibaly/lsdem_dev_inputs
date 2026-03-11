@@ -22,7 +22,7 @@ group g5 molecule 5
 
 velocity g1 set 0.01 0.03 0
 velocity g2 set 0.04 0.02 0
-velocity g3 set 0.0 -0.05 0 
+velocity g3 set 0.0 -0.05 0
 velocity g4 set -0.1 0.07 0
 velocity g5 set 0.06 -0.05 0
 
@@ -33,7 +33,7 @@ fix             2 all enforce2d
 
 
 pair_style ls/dem 1.0
-pair_coeff * * 1.0 0.5 0.1 0 0 0 1.0 0 0 0 0
+pair_coeff * * 1.0 0.5 0.1 0 0 0 1.0
 
 thermo_style custom step
 timestep 0.1

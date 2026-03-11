@@ -35,7 +35,7 @@ fix			lsfix all rigid/ls/dem molecule infile file_sphere
 pair_style 	ls/dem 1.0
 # Contact model parameters and constants
 # pair_coeff type type kn kt mu etan etat knp cut kn1 etan1 kt1 etat1
-pair_coeff 	* * 1.0e7 0 0 0 0 0 1.0 0 0 0 0
+pair_coeff 	* * 1.0e7 0 0 0 0 0 1.0
 
 fix 3 all setforce 0.0 0.0 0.0
 # We *NEED* a fix setorque or extension of setforce for extended atoms !!!

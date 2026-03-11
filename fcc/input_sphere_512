@@ -282,7 +282,7 @@ fix            1 all rigid/ls/dem molecule infile infile_sphere
 
 pair_style ls/dem 1.0
 # pair_coeff * * kn kt mu etan etat knp cut kn1 etan1 kt1 etat1
-pair_coeff * * 1.0e7 0.25e7 0.5 0 0 0 0.18 0 0 0 0
+pair_coeff * * 1.0e7 0.25e7 0.5 0 0 0 0.18
 
 timestep 8.0e-4
 thermo_style custom step pxx pyy pzz pxy pxz pyz

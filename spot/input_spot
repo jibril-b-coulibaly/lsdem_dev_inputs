@@ -29,7 +29,7 @@ neigh_modify   exclude molecule/intra all
 fix             1 all rigid/small/ls/dem molecule
 
 pair_style ls/dem 0.2
-pair_coeff * * 1.0 0.0 0.0 0.1 0.0 0.0 0.2 0.0 0.0 0.0 0.0
+pair_coeff * * 1.0 0.0 0.0 0.1 0.0 0.0 0.2
 
 thermo_style custom step
 timestep 0.1
