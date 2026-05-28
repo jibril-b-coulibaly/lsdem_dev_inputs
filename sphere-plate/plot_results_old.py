@@ -39,26 +39,6 @@ SI_UNITS = {
     "Torque": "N·m",
 }
 
-# Dump-file glob pattern for each test case. The printer in every input file
-# writes "dump_grain_<name>_<N>.txt" (N = number of nodes), so each case is
-# matched by its own pattern and the node count is recovered from the suffix.
-CASE_PATTERNS = {
-    1: "dump_grain_bounce_*.txt",
-    2: "dump_grain_tangent_*.txt",
-    3: "dump_grain_shear_*.txt",
-    4: "dump_grain_twist_*.txt",
-    5: "dump_grain_roll_*.txt",
-}
-
-# Human-readable case names (used for default output prefixes/titles)
-CASE_NAMES = {
-    1: "normal",
-    2: "tangent",
-    3: "shear",
-    4: "twist",
-    5: "roll",
-}
-
 # ---- Parsing ----
 def parse_file(path):
     steps = []
@@ -82,25 +62,22 @@ def parse_file(path):
         return np.array([]), np.empty((0,12))
     return np.array(steps), np.vstack(rows)
 
-# ---- Extract number from filename ----
+# ---- Extract number from filename for case 1 ----
 def extract_number_from_filename(filename, caseflag):
     """
-    Extract the (zero-padded) node count from a dump filename and format it as
-    N_n = value. This is used as the dataset label and, in turn, drives the MAE
-    convergence plot. Applies to every case, since all cases sweep resolution.
+    For case 1, extract zero-padded numbers from filename
+    and format as N_n = value
     """
-    # Match the trailing _<digits> before the .txt extension, e.g.
-    # dump_grain_shear_3200.txt -> 3200. Fall back to any _<digits> group, then
-    # to the bare basename if nothing numeric is present.
-    base = os.path.basename(filename)
-    match = re.search(r'_0*(\d+)\.txt$', base)
-    if match is None:
-        match = re.search(r'_0*(\d+)', base)
+    if caseflag != 1:
+        return os.path.basename(filename)
+    
+    # Look for patterns like _0400, _400, etc.
+    match = re.search(r'_0*(\d+)', filename)
     if match:
         number = int(match.group(1))
         return f'$N_n = {number}$'
     else:
-        return base
+        return os.path.basename(filename)
 
 # ---- Extract number from label ----
 def extract_number_from_label(label):
@@ -434,14 +411,12 @@ def main(dt=1.0, caseflag=0, t_min=None, t_max=None, fig_width=8, fig_height=4.5
     show_title : bool, optional
         Whether to show plot titles (default: True)
     """
-    pattern = CASE_PATTERNS.get(caseflag, "dump_*.txt")
+    pattern = "dump_*.txt"
     files = sorted(glob.glob(pattern))
 
     if len(files) == 0:
-        print(f"No matching files found for case {caseflag} (pattern '{pattern}'). "
-              f"Creating two demo files for demonstration.")
-        demo_base = CASE_NAMES.get(caseflag, "bounce")
-        files = [f"dump_grain_{demo_base}_demo1.txt", f"dump_grain_{demo_base}_demo2.txt"]
+        print("No matching files found. Creating two demo files for demonstration.")
+        files = ["dump_grain_bounce_demo1.txt", "dump_grain_bounce_demo2.txt"]
         t = np.arange(0,15000,10)
         for fn, amp in zip(files, (0.5, 0.6)):
             with open(fn, 'w') as fh:
@@ -489,30 +464,7 @@ def main(dt=1.0, caseflag=0, t_min=None, t_max=None, fig_width=8, fig_height=4.5
         print(f"Saved convergence plot:\n - {convergence_plot}")
 
 if __name__ == "__main__":
-    # Per-case default upper time limit for the x-axis (seconds). Case 1 is the
-    # free bounce; cases 2-5 are prescribed-kinematics tests whose transients
-    # (e.g. the stick -> slip transition) develop early, so a shorter window is
-    # usually clearer. Set to None to use the full simulated time.
-    CASE_TMAX = {
-        1: 3.0,
-        2: 0.5,
-        3: 0.5,
-        4: 0.5,
-        5: 0.5,
-    }
-
-    # Select which case(s) to plot. Set to a single integer (e.g. 1) to plot one
-    # case, or to a list/range to plot several. Files are picked up per case via
-    # CASE_PATTERNS, so only cases with matching dump files produce real plots.
-    cases_to_plot = [1, 2, 3, 4, 5]
-
-    if isinstance(cases_to_plot, int):
-        cases_to_plot = [cases_to_plot]
-
     # Can provide dt, caseflag, t_min, t_max, fig_width, fig_height, show_title.
-    for cf in cases_to_plot:
-        print(f"\n=== Plotting case {cf} ({CASE_NAMES.get(cf, '?')}) ===")
-        main(dt=1.0e-4, caseflag=cf, t_max=CASE_TMAX.get(cf),
-             fig_width=4.0, fig_height=3.0, show_title=False)
+    main(dt=1.0e-4, caseflag=1, t_max=3.0, fig_width=4.0, fig_height=3.0, show_title=False)
 
 # End of file

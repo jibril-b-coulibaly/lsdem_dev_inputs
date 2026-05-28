@@ -342,7 +342,12 @@ def analytical_solution(t, caseflag):
         nt = np.array([-vx_prescribed, -vy_prescribed, 0.0]) / vt_mag  # tangent direction
         torque_dir = np.array([vy_prescribed, -vx_prescribed, 0.0]) / vt_mag
 
-        X[:, :] = np.array([x0, y0, d])
+        # Position drifts linearly under the constant tangent velocity; the
+        # overlap (z) is held fixed. Force/torque are translation-invariant, but
+        # including the drift makes the position components compare correctly.
+        X[:, 0] = x0 + vx_prescribed*t
+        X[:, 1] = y0 + vy_prescribed*t
+        X[:, 2] = d
         V[:, :] = np.array([vx_prescribed, vy_prescribed, vz_prescribed])
 
         for i in range(1, numSteps):
@@ -442,7 +447,11 @@ def analytical_solution(t, caseflag):
         tau = np.arccos(d/R)
         vn = 0.0
 
-        X[:, :] = np.array([x0, y0, d])
+        # Position drifts linearly under the rolling translation velocity; the
+        # overlap (z) is held fixed.
+        X[:, 0] = x0 + vx_roll*t
+        X[:, 1] = y0 + vy_roll*t
+        X[:, 2] = d
         V[:, :] = np.array([vx_roll, vy_roll, vz_roll])
 
         # Normal force: the rotation-induced normal force vanishes to leading
