@@ -12,11 +12,11 @@ create_box 	1 box
 mass 1 1.0
 
 # Set number of nodes
-variable N equal 3200
+variable N equal 100
 
 # Loading the nodes
-read_data	nodes_sphere_${N} add 0 1 shift 0.0 0.0 1.5
-read_data	nodes_plate_${N} add ${N} 2 shift 0.0 0.0 -0.5
+read_data	nodes_sphere_${N} add 0 0 shift 0.0 0.0 1.5
+read_data	nodes_plate_${N} add ${N} 1 shift 0.0 0.0 -0.5
 
 # Defining the objects as collections of nodes
 group		grain1 molecule 1
@@ -40,7 +40,7 @@ fix			lsfix all rigid/ls/dem molecule infile fixfile_sphere-plate gravity grav e
 pair_style 	ls/dem 1.0
 # Contact model parameters and constants
 # pair_coeff type type kn kt mu etan etat knp cut kn1 etan1 kt1 etat1
-pair_coeff 	* * 1.0e8 0.25e8 0.5 1.0e6 1.0e6 0 1.0 0 0 0 0
+pair_coeff 	* * 1.0e8 0.25e8 0.5 1.0e6 1.0e6 0 1.0
 
 # Neighbour list binning (0.2 times cut from pair_coeff)
 neighbor 0.2 bin

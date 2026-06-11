@@ -273,8 +273,13 @@ def make_plots(all_data, all_times, all_steps, labels, dt, caseflag, outdir="fig
                 #     label_with_mae = f'{lab}, {spac}MAE = N/A'
 
                 label_with_mae = lab
-                
-                ax.plot(times, data[:, idx], linewidth=1.0, label=label_with_mae, 
+
+                # Skip the first sample (step 0): it is a one-off setup-instant
+                # transient (the contact force is evaluated during fix setup
+                # before the rigid body settles), identical across cases and not
+                # physical. compute_mae() already skips this point, so excluding
+                # it here keeps the plot autoscale and the MAE consistent.
+                ax.plot(times[1:], data[1:, idx], linewidth=1.0, label=label_with_mae,
                        color=color, zorder=2, alpha=0.9)
 
             # Professional boxed axes with ticks

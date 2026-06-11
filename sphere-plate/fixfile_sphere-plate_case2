@@ -1,0 +1,15 @@
+# Case 2 (tangential sliding), prescribed constant kinematics via the "infinite inertia" trick.
+# The sphere body is given a HUGE mass (x1e6 the physical value), so the LS-derived inertia
+# (which scales with masstotal) is also huge: the contact force/torque then change its vcm/omega
+# negligibly over the run, reproducing the constant-velocity assumption of the analytical solution
+# WITHOUT any hold fixes (no setforce/settorque, so no fix-ordering setup kick and no rigid-body
+# settorque warning). The contact force/torque are read directly from f_lsfix[1][7..12].
+#
+# Sphere centre held at z = 0.95 (overlap h = 0.05). vcm = (0.5, 0.3, 0); no spin (angmom = 0).
+# Inertia columns are informational only: fix rigid/ls/dem overrides them with the LS-grid value
+# (= 0.4 * masstotal * R^2 for the sphere), which is huge because masstotal is huge.
+# Plane (body 2) keeps its physical properties and is frozen by "fix immob grain2 freeze".
+# ID masstotal xcm ycm zcm ixx iyy izz ixy ixz iyz vxcm vycm vzcm lx ly lz ix iy iz memoryflag scale gridfile
+2
+1 10471975512.0 0.0 0.0 0.95 4188790204.79 4188790204.79 4188790204.79 0.0 0.0 0.0 0.5 0.3 0.0 0.0 0.0 0.0 0 0 0 0 1.0 grid_sphere.txt
+2 62500  0.0 0.0 -0.5 135416.666667 135416.666667 260416.666667  0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0 0 0 0 1.0 grid_plate.txt

@@ -19,8 +19,8 @@ variable N equal 3200
 # The sphere is placed at a constant overlap h = R - d = 1.0 - 0.95 = 0.05 m,
 # i.e. centre at z = 0.95 (plate top surface is at z = 0), matching the
 # fixed-overlap, prescribed-kinematics assumption of the analytical solution.
-read_data	nodes_sphere_${N} add 0 1 shift 0.0 0.0 0.95
-read_data	nodes_plate_${N} add ${N} 2 shift 0.0 0.0 -0.5
+read_data	nodes_sphere_${N} add 0 0 shift 0.0 0.0 0.95
+read_data	nodes_plate_${N} add ${N} 1 shift 0.0 0.0 -0.5
 
 # Defining the objects as collections of nodes
 group		grain1 molecule 1
@@ -38,7 +38,10 @@ fix 		immob grain2 freeze
 neigh_modify   exclude molecule/intra all
 
 # Apply LS-DEM fix (no gravity, see note above)
-fix			lsfix all rigid/ls/dem molecule infile fixfile_sphere-plate
+# The infile gives the sphere a huge mass/inertia and the prescribed spin via angmom
+# (omega = 0, 0, 10 -> angmom = I*omega), so the contact torque barely perturbs the spin:
+# constant-spin kinematics without holds.
+fix			lsfix all rigid/ls/dem molecule infile fixfile_sphere-plate_case4
 
 # Contact model 
 pair_style 	ls/dem 1.0
@@ -48,30 +51,15 @@ pair_style 	ls/dem 1.0
 # mu=0.5, etan=1e6, etat=1e6). The example input_case_1 used kt=0.25e8, which
 # is irrelevant to the normal-only bounce but WOULD matter here; reconcile the
 # two if needed so the simulation and analytical solution use the same kt.
-pair_coeff 	* * 1.0e8 0.5e8 0.5 1.0e6 1.0e6 0 1.0 0 0 0 0
+pair_coeff 	* * 1.0e8 0.5e8 0.5 1.0e6 1.0e6 0 1.0
 
 # Neighbour list binning (0.2 times cut from pair_coeff)
 neighbor 0.2 bin
 
 # --- Prescribed constant kinematics with infinite inertia -----------------
-# Initialise the body translational and angular velocity. With the hold
-# fixes below zeroing the net force and torque every step, the body keeps
-# these values for the whole run (an 'infinite inertia' body), reproducing
-# the constant-velocity / constant-spin assumption of the analytical solution.
-set group grain1 vx 0.0 vy 0.0 vz 0.0 omega 0.0 0.0 10.0
-
-# Hold the body and, as a side effect, measure the contact reaction:
-#   fix setforce      -> zeroes the net force, holds vcm; its global 3-vector
-#                        f_holdforce[1..3] is the total force on the body
-#                        BEFORE zeroing, i.e. the contact force (fx,fy,fz).
-#   fix settorque/atom -> zeroes the net torque, holds omega; its global
-#                        3-vector f_holdtorque[1..3] is the total torque
-#                        BEFORE zeroing, i.e. the contact torque (tx,ty,tz).
-# In this LS-DEM code the contact lever-arm torque is stored per node in
-# atom->torque and summed into the body torque, so zeroing it cleanly holds
-# the spin and the reported vector equals the contact torque about the COM.
-fix 		holdforce  grain1 setforce 0.0 0.0 0.0
-fix 		holdtorque grain1 settorque/atom 0.0 0.0 0.0
+# The angular velocity is set in the infile (angmom = I*omega), NOT with `set`:
+# fix rigid/ls/dem reads vcm/angmom from the infile and would override a `set`.
+# The huge inertia keeps omega constant without any hold fixes.
 
 thermo_style custom step
 timestep 1e-4
@@ -79,10 +67,9 @@ thermo 1000
 
 # LAMMPS allow to get the column of a global array with array[col] but not the row, so we must print all values by hand
 # x y z vx vy vz fx fy fz tx ty tz
-# Position and velocity come from the rigid-body array f_lsfix[1][1..6];
-# the contact force and torque come from the hold fixes (see note above),
-# because under the hold fixes f_lsfix[1][7..12] would report zero.
-fix 	printer all print 10 "$(step) $(f_lsfix[1][1]) $(f_lsfix[1][2]) $(f_lsfix[1][3]) $(f_lsfix[1][4]) $(f_lsfix[1][5]) $(f_lsfix[1][6]) $(f_holdforce[1]) $(f_holdforce[2]) $(f_holdforce[3]) $(f_holdtorque[1]) $(f_holdtorque[2]) $(f_holdtorque[3])" file dump_grain_twist_${N}.txt screen no
+# With no hold fixes, the rigid-body array f_lsfix[1][7..12] holds the real
+# contact force (fx,fy,fz) and torque (tx,ty,tz) about the COM (same as case 1).
+fix 	printer all print 10 "$(step) $(f_lsfix[1][1]) $(f_lsfix[1][2]) $(f_lsfix[1][3]) $(f_lsfix[1][4]) $(f_lsfix[1][5]) $(f_lsfix[1][6]) $(f_lsfix[1][7]) $(f_lsfix[1][8]) $(f_lsfix[1][9]) $(f_lsfix[1][10]) $(f_lsfix[1][11]) $(f_lsfix[1][12])" file dump_grain_twist_${N}.txt screen no
 
 #dump mydump grain1 custom 10 dump_grain_twist_${N} id type mol x y z vx vy vz fx fy fz
 

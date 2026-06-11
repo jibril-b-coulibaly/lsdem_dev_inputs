@@ -1,0 +1,9 @@
+# Case 4 (twist about z), prescribed constant kinematics via "infinite inertia" (see case 2 infile).
+# Sphere held at z = 0.95, no translation, spin omega = (0, 0, 10) rad/s.
+# angmom = I * omega with the (huge) sphere inertia I = 4.18879020479e9:
+#   lz = 4.18879020479e9 * 10 = 4.18879020479e10
+# Plane (body 2) frozen by "fix immob grain2 freeze".
+# ID masstotal xcm ycm zcm ixx iyy izz ixy ixz iyz vxcm vycm vzcm lx ly lz ix iy iz memoryflag scale gridfile
+2
+1 10471975512.0 0.0 0.0 0.95 4188790204.79 4188790204.79 4188790204.79 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 4.18879020479e10 0 0 0 0 1.0 grid_sphere.txt
+2 62500  0.0 0.0 -0.5 135416.666667 135416.666667 260416.666667  0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0 0 0 0 1.0 grid_plate.txt

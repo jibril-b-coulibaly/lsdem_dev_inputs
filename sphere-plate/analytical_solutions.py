@@ -195,24 +195,60 @@ def torque_max_shear_roll(omega_x, omega_y, d, R, kn, mu):
     return mag*np.array([omega_y, -omega_x, 0.0])
 
 
+def normal_viscous_torque(omega_x, omega_y, d, R, etan):
+    """
+    Normal-viscous contribution to the torque from rotation about a horizontal
+    axis (the contact-normal / z component of the viscous stress).
+
+    This term is IDENTICAL for pure shear and for pure roll: in rolling, the
+    translation v_Omega = R(-omega_y, omega_x, 0) is purely in-plane and adds
+    nothing to the z-velocity of the cap, so the mechanism that generates this
+    torque is the same in both cases. Derived and verified (symbolically and by
+    direct 2D integration) as
+        T = pi * etan * R^4 * (2/3 - cos tau + cos^3 tau / 3) * (omega_x, omega_y, 0).
+
+    NOTE (manuscript correction): the manuscript wrote this term as
+    pi*etan*R^5/2*(...) for shear and pi/2*etan*R^4*(...) for roll. Both are
+    wrong: the power is R^4 (not R^5; the R^5 was invisible in the tests because
+    R = 1), and the coefficient is pi (not pi/2). The R^5-vs-R^4 mismatch
+    between the two manuscript expressions was the tell.
+
+    This is the UNCAPPED form. The non-tensile stress limit (Eq. sigmalim)
+    reduces it modestly (to roughly 0.87 of this value for the shear test and
+    0.94 for the roll test) by clipping a thin sliver near the receding cap
+    edge. Unlike the rotational normal FORCE (which nearly vanishes because its
+    integrand is odd in the azimuth), this torque integrand is even in the
+    azimuth and therefore survives the cap largely intact.
+    """
+    tau = np.arccos(np.clip(d/R, -1.0, 1.0))
+    g = 2.0/3.0 - np.cos(tau) + np.cos(tau)**3/3.0
+    return np.pi*etan*R**4*g*np.array([omega_x, omega_y, 0.0])
+
+
 def torque_shear_viscous(omega_x, omega_y, d, R, etan, etat):
     """Viscous torque for pure shear (T_eta)."""
     tau = np.arccos(np.clip(d/R, -1.0, 1.0))
-    # NOTE: transcribed verbatim from the manuscript; the normal-viscous term
-    # carries R^5 here versus R^4 in the roll expression below.
-    coeff = (2.0*np.pi*etat*R**3*(R*(1.0 - np.cos(tau)**3)/6.0
-                                  - d*np.sin(tau)**2/4.0)
-             + np.pi*etan*R**5/2.0*(2.0/3.0 - np.cos(tau) + np.cos(tau)**3/3.0))
-    return coeff*np.array([omega_x, omega_y, 0.0])
+    # Tangential (eta_t) contribution, transcribed from the manuscript.
+    tangential = (2.0*np.pi*etat*R**3*(R*(1.0 - np.cos(tau)**3)/6.0
+                                       - d*np.sin(tau)**2/4.0)
+                  )*np.array([omega_x, omega_y, 0.0])
+    # Normal-viscous (eta_n) contribution, corrected and shared with roll.
+    return tangential + normal_viscous_torque(omega_x, omega_y, d, R, etan)
 
 
 def torque_roll_viscous(omega_x, omega_y, d, R, etan, etat):
     """Viscous torque for pure roll (T_eta^roll)."""
     tau = np.arccos(np.clip(d/R, -1.0, 1.0))
-    coeff = (2.0*np.pi*etat*R**3*(R*(1.0 - 3.0*np.cos(tau)**2 + 2.0*np.cos(tau)**3)/12.0
-                                  - d*(1.0 - np.cos(tau))**2/4.0)
-             + np.pi/2.0*etan*R**4*(2.0/3.0 - np.cos(tau) + np.cos(tau)**3/3.0))
-    return -coeff*np.array([omega_x, omega_y, 0.0])
+    # Tangential (eta_t) rolling-resistance contribution, transcribed from the
+    # manuscript (note its leading minus sign, opposite to shear).
+    tangential = -(2.0*np.pi*etat*R**3*(R*(1.0 - 3.0*np.cos(tau)**2 + 2.0*np.cos(tau)**3)/12.0
+                                        - d*(1.0 - np.cos(tau))**2/4.0)
+                   )*np.array([omega_x, omega_y, 0.0])
+    # Normal-viscous (eta_n) contribution is the SAME as for shear (see helper).
+    # The manuscript folded this term inside the negated roll bracket, which
+    # also flipped its sign; the physically correct term is +pi*etan*R^4*g, so
+    # it is added here with the shear sign rather than subtracted.
+    return tangential + normal_viscous_torque(omega_x, omega_y, d, R, etan)
 
 
 # --------------------------- Twist: omega_z only ---------------------------

@@ -1,0 +1,10 @@
+# Case 3 (shear spin), prescribed constant kinematics via "infinite inertia" (see case 2 infile).
+# Sphere held at z = 0.95, no translation, spin omega = (5, 3, 0) rad/s.
+# angmom = I * omega with the (huge) sphere inertia I = 0.4*masstotal*R^2 = 4.18879020479e9:
+#   lx = 4.18879020479e9 * 5 = 2.094395102395e10
+#   ly = 4.18879020479e9 * 3 = 1.256637061437e10
+# Plane (body 2) frozen by "fix immob grain2 freeze".
+# ID masstotal xcm ycm zcm ixx iyy izz ixy ixz iyz vxcm vycm vzcm lx ly lz ix iy iz memoryflag scale gridfile
+2
+1 10471975512.0 0.0 0.0 0.95 4188790204.79 4188790204.79 4188790204.79 0.0 0.0 0.0 0.0 0.0 0.0 2.094395102395e10 1.256637061437e10 0.0 0 0 0 0 1.0 grid_sphere.txt
+2 62500  0.0 0.0 -0.5 135416.666667 135416.666667 260416.666667  0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0 0 0 0 1.0 grid_plate.txt

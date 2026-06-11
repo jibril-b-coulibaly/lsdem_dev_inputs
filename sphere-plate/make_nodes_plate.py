@@ -4,16 +4,13 @@
 import numpy as np
 
 # Size of the plate
-L = 5.0*1.0 # 5 times the radius of the sphere
-T = 1.0*1.0 # 1 time the radius of the sphere
-# Number of points that we had for the sphere (to compute spacing)
-equivNumNodes = 100
-# Spacing between nodes (edge length in HCP lattice). Last number is R.
-dist = np.sqrt( 8.0 * np.pi / (np.sqrt(3) * equivNumNodes) ) * 1.0 # Set such that area per node for plate and sphere are equal
+L = 5.0*1.0 # 5 times the radius of the sphere (full side length; plate spans +-L/2)
+T = 1.0*1.0 # 1 time the radius of the sphere (thickness)
 
-# Generate (near-)uniformly spaced points on a plate and write them
-# to a LAMMPS-like data file "nodes_plate_numNodes".
-outfile = f"nodes_plate_{equivNumNodes}"  # output filename
+# Equivalent sphere node counts (one plate data file per count). These MUST match
+# the counts in make_nodes_sphere.py so the plate node spacing equals the sphere
+# spacing at every resolution.
+node_counts = [100, 200, 400, 800, 1600, 3200]
 
 def hex_on_rect_xy(z, L, dist):
     """Hex lattice on rectangle in the x-y plane at height z (centre at (0,0,z))."""
@@ -63,48 +60,57 @@ def hex_on_rect_xz(y, L, T, dist):
                 pts.append((x, y, z))
     return pts
 
-# Collect points from faces
-all_pts = []
+for equivNumNodes in node_counts:
+    outfile = f"nodes_plate_{equivNumNodes}"  # output filename
+    # Spacing between nodes (edge length in HCP lattice). Set such that the area
+    # per node for the plate equals the area per node of the sphere with
+    # equivNumNodes nodes -> plate and sphere spacing match.
+    dist = np.sqrt( 8.0 * np.pi / (np.sqrt(3) * equivNumNodes) ) * 1.0
 
-# top and bottom: z = ±T/2, span L x L
-all_pts += hex_on_rect_xy( 0.5*T, L, dist)
-all_pts += hex_on_rect_xy(-0.5*T, L, dist)
+    # Collect points from faces
+    all_pts = []
 
-# side faces at x = ±L/2 (span y x z = L x T)
-all_pts += hex_on_rect_yz( 0.5*L, L, T, dist)
-all_pts += hex_on_rect_yz(-0.5*L, L, T, dist)
+    # top and bottom: z = ±T/2, span L x L
+    all_pts += hex_on_rect_xy( 0.5*T, L, dist)
+    all_pts += hex_on_rect_xy(-0.5*T, L, dist)
 
-# side faces at y = ±L/2 (span x x z = L x T)
-all_pts += hex_on_rect_xz( 0.5*L, L, T, dist)
-all_pts += hex_on_rect_xz(-0.5*L, L, T, dist)
+    # side faces at x = ±L/2 (span y x z = L x T)
+    all_pts += hex_on_rect_yz( 0.5*L, L, T, dist)
+    all_pts += hex_on_rect_yz(-0.5*L, L, T, dist)
 
-# Deduplicate points with a rounding tolerance to avoid floating point near-duplicates
-if len(all_pts) == 0:
-    pts = np.empty((0,3))
-else:
-    arr = np.array(all_pts)
-    # round to avoid tiny fp differences (12 decimals is usually safe)
-    rounded = np.round(arr, decimals=12)
-    uniq = np.unique(rounded, axis=0)
-    # sort deterministically by x, y, z
-    order = np.lexsort((uniq[:,2], uniq[:,1], uniq[:,0]))
-    pts = uniq[order]
+    # side faces at y = ±L/2 (span x x z = L x T)
+    all_pts += hex_on_rect_xz( 0.5*L, L, T, dist)
+    all_pts += hex_on_rect_xz(-0.5*L, L, T, dist)
 
-# -------------------------
-# Write output file in same format as original script
-# -------------------------
-with open(outfile, "w") as f:
-    f.write("# Generated using make_nodes_plate.py (hexagonal lattice sampling)\n\n")
-    f.write(f"{len(pts)} atoms\n")
-    f.write(f" 1 atom types\n\n")
-    f.write(f"{-0.5*L} {0.5*L} xlo xhi\n")
-    f.write(f"{-0.5*L} {0.5*L} ylo yhi\n")
-    f.write(f"{-0.5*T} {0.5*T} zlo zhi\n\n")
-    f.write("Atoms\n\n")
-    for i, (xi, yi, zi) in enumerate(pts):
-        f.write(f"{i+1} 1 1 {xi} {yi} {zi}\n")
+    # Deduplicate points with a rounding tolerance to avoid floating point near-duplicates
+    if len(all_pts) == 0:
+        pts = np.empty((0,3))
+    else:
+        arr = np.array(all_pts)
+        # round to avoid tiny fp differences (12 decimals is usually safe)
+        rounded = np.round(arr, decimals=12)
+        uniq = np.unique(rounded, axis=0)
+        # sort deterministically by x, y, z
+        order = np.lexsort((uniq[:,2], uniq[:,1], uniq[:,0]))
+        pts = uniq[order]
 
-print(f"Wrote {len(pts)} nodes for a plate with side length L = {L} and thickness T = {T} to {outfile} using a hexagonal lattice pattern.")
+    # -------------------------
+    # Write output file in the atom_style ls/dem data format: "ID Mol Type X Y Z"
+    # (molecule = 1 here; read_data ... add <id> <moloffset> sets the final
+    # molecule ID in the input script).
+    # -------------------------
+    with open(outfile, "w") as f:
+        f.write("# Generated using make_nodes_plate.py (hexagonal lattice sampling)\n\n")
+        f.write(f"{len(pts)} atoms\n")
+        f.write(f" 1 atom types\n\n")
+        f.write(f"{-0.5*L} {0.5*L} xlo xhi\n")
+        f.write(f"{-0.5*L} {0.5*L} ylo yhi\n")
+        f.write(f"{-0.5*T} {0.5*T} zlo zhi\n\n")
+        f.write("Atoms\n\n")
+        for i, (xi, yi, zi) in enumerate(pts):
+            f.write(f"{i+1} 1 1 {xi} {yi} {zi}\n")
+
+    print(f"Wrote {len(pts)} nodes for a plate with side length L = {L} and thickness T = {T} to {outfile} using a hexagonal lattice pattern.")
 
 # End of file
 
