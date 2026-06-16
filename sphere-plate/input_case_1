@@ -12,7 +12,7 @@ create_box 	1 box
 mass 1 1.0
 
 # Set number of nodes
-variable N equal 100
+variable N equal 3200
 
 # Loading the nodes
 read_data	nodes_sphere_${N} add 0 0 shift 0.0 0.0 1.5

@@ -1,11 +1,12 @@
 # Case 5 (pure roll), prescribed constant kinematics via "infinite inertia" (see case 2 infile).
-# Sphere held at z = 0.95, rolling: vcm = (-R*omega_y, R*omega_x, 0) = (-1.5, 2.0, 0),
-# spin omega = (2, 1.5, 0) rad/s.
+# Sphere held at z = 0.95, TRUE rolling (no contact slip): the no-slip condition
+# vcm + omega x r_contact = 0 with r_contact = (0,0,-R) gives vcm = (R*omega_y, -R*omega_x, 0)
+# = (1.5, -2.0, 0); spin omega = (2, 1.5, 0) rad/s.
 # angmom = I * omega with the (huge) sphere inertia I = 4.18879020479e9:
 #   lx = 4.18879020479e9 * 2.0 = 8.37758040958e9
 #   ly = 4.18879020479e9 * 1.5 = 6.283185307185e9
 # Plane (body 2) frozen by "fix immob grain2 freeze".
 # ID masstotal xcm ycm zcm ixx iyy izz ixy ixz iyz vxcm vycm vzcm lx ly lz ix iy iz memoryflag scale gridfile
 2
-1 10471975512.0 0.0 0.0 0.95 4188790204.79 4188790204.79 4188790204.79 0.0 0.0 0.0 -1.5 2.0 0.0 8.37758040958e9 6.283185307185e9 0.0 0 0 0 0 1.0 grid_sphere.txt
+1 10471975512.0 0.0 0.0 0.95 4188790204.79 4188790204.79 4188790204.79 0.0 0.0 0.0 1.5 -2.0 0.0 8.37758040958e9 6.283185307185e9 0.0 0 0 0 0 1.0 grid_sphere.txt
 2 62500  0.0 0.0 -0.5 135416.666667 135416.666667 260416.666667  0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0 0 0 0 1.0 grid_plate.txt

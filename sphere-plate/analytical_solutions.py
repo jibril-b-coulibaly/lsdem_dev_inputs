@@ -36,14 +36,22 @@ def normal_force_linear(h, vn, R, kn, etan):
 
     Sign convention: vn > 0 means approaching / compressing the contact.
 
-    The total normal stress is limited to be repulsive (Eq. sigmalim),
-        sigma_n <- max(0, sigma_n) ,
-    NOT the velocity. During separation the viscous term can therefore reduce
-    the force; the outermost ring of the cap (where the elastic stress is
-    smallest) goes tensile first and is clipped, while the interior still
-    carries a reduced viscous force. This is the physically correct behaviour:
-    a cohesionless contact loses load from the edge inward, it does not simply
-    switch off all damping on the way out.
+    Damping / repulsion model: the local stress sigma_n = kn*delta + etan*vn is
+    formed with the SIGNED normal velocity and then clipped to be repulsive,
+        sigma_n <- max(0, sigma_n)        (Eq. sigmalim) .
+    This matches the LS-DEM implementation, which forms the per-node force with
+    the signed velocity and caps the total at zero,
+        fn = MAX(kn*u + etan*v_rel_n, 0)  (pair_ls_dem.cpp:521-535) .
+    On separation (vn < 0) the dashpot is therefore active and reduces the
+    force; the outer ring of the cap (smallest elastic stress) goes tensile
+    first and is clipped, while the interior still carries a reduced force. The
+    repulsive region extends to an effective cap height h_eff where sigma_n = 0,
+    and integrating the clipped stress over the cap gives pi*R*kn*h_eff^2.
+
+    NOTE: clip the FORCE (max(Fn,0)), NOT the velocity (max(vn,0)). Velocity-
+    clipping switches the dashpot off entirely on the way out and overshoots the
+    restitution; force-clipping keeps the (repulsive part of the) dashpot, which
+    is what the code does.
 
     Cap height h = R - d, with d the separation distance (z of the centre).
     """
@@ -136,30 +144,38 @@ def tangent_force_linear(h, d, vt, vn, t, R, kn, kt, etan, etat, mu):
 def torque_tangent_linear(h, d, vt, vn, t, R, kn, kt, etan, etat, mu):
     """
     Torque vector for a constant linear tangent velocity vt = (vx, vy, 0)
-    (Eq. T_t), with stick and slip limits. The direction is (vy, -vx, 0)
-    (built by the caller); here we return the scalar magnitude that multiplies
-    that direction.
+    (Eq. T_t), with stick and slip limits. The direction is (-vy, vx, 0)
+    (built by the caller; lever arm r = (0, 0, -R) acting on the friction force
+    (-vx, -vy) gives T = r x F ~ (-vy, vx)); here we return the scalar magnitude
+    that multiplies that (unit) direction.
+
+    LEVER-ARM CORRECTION (2026-06-16): the in-plane torque uses the geometric
+    contact-point lever a(theta) = (R*cos(theta) + d)/2 (the z-distance from the
+    COM to the contact point, which sits at the midpoint between the surfaces --
+    exactly what the code uses, contact_point = node - 0.5*u*normal). The
+    manuscript instead used the local overlap delta = R*cos(theta) - d as the
+    lever (its bracket [R^2/3(1-c^3) - Rd(1-c^2) + d^2(1-c)] = integral delta^2),
+    which is O(h^3) and ~20-60x too small. With a(theta) the torque of an
+    in-plane traction tau_t is
+        |T| = 2 pi R^2 integral_0^tau a(theta) tau_t(theta) sin(theta) dtheta ,
+    which is O(h^2) ~ mu*Fn*<a> and matches the sim.
     """
     tau = np.arccos(np.clip(d/R, -1.0, 1.0))
-    drive = kt*vt*t + etat*vt
+    c = np.cos(tau)
+    drive = (kt*t + etat)*vt                       # uniform tangential stress
     lo = drive - mu*etan*vn
     if lo <= 0.0:
-        # Stick limit (theta_s -> tau)
-        return 2.0*np.pi*R**2*(kt*t + etat)*(R/4.0*np.sin(tau)**2
-                                             - d/2.0*(1.0 - np.cos(tau)))
+        # Stick limit (theta_s -> tau): elastic stress 'drive' over whole cap.
+        return np.pi*R**2*drive*(R*np.sin(tau)**2/2.0 + d*(1.0 - c))
     if lo >= mu*kn*h:
-        # Slip limit (theta_s -> 0)
-        return (2.0*np.pi*R**2/vt)*(mu*kn/2.0)*(
-            R**2/3.0*(1.0 - np.cos(tau)**3)
-            - R*d*(1.0 - np.cos(tau)**2)
-            + d**2*(1.0 - np.cos(tau)))
-    # Partial slip; xi = cos(theta_s)
+        # Slip limit (theta_s -> 0): traction mu*kn*(R cos theta - d) everywhere.
+        return np.pi*R**2*mu*kn*(R**2*(1.0 - c**3)/3.0 - d**2*(1.0 - c))
+    # Partial slip: stick (elastic 'drive') for 0<theta<theta_s, slip
+    # (mu*kn*delta) for theta_s<theta<tau; xi = cos(theta_s).
     xi = (drive - mu*etan*vn + mu*kn*d)/(mu*kn*R)
-    return (2.0*np.pi*R**2/vt)*(
-        vt*(kt*t + etat)*(R/4.0*(1.0 - xi**2) - d/2.0*(1.0 - xi))
-        + (mu*kn/2.0)*(R**2/3.0*(xi**3 - np.cos(tau)**3)
-                       - R*d*(xi**2 - np.cos(tau)**2)
-                       + d**2*(xi - np.cos(tau))))
+    return 2.0*np.pi*R**2*(
+        drive*(R*(1.0 - xi**2)/4.0 + d*(1.0 - xi)/2.0)
+        + (mu*kn/2.0)*(R**2*(xi**3 - c**3)/3.0 - d**2*(xi - c)))
 
 
 # --------------------------- Shear / roll: angular velocity ----------------
@@ -170,13 +186,77 @@ def coulomb_slip_met(Omega, d, R, kn, etat, mu):
 
 
 def tangent_force_shear_viscous(omega_x, omega_y, tau, R, etat):
-    """Purely viscous tangent force for pure shear (v_Omega = 0)."""
-    return np.pi*etat*R**3*np.sin(tau)**2 * np.array([-omega_y, omega_x, 0.0])
+    """
+    Purely viscous tangent force for pure shear (v_Omega = 0).
+
+    The contact-point surface velocity from the spin is omega x r with the
+    lever arm r = (0, 0, -R) (contact BELOW the centre), giving R*(-omega_y,
+    omega_x, 0). Friction OPPOSES it, so the force direction is
+    (omega_y, -omega_x, 0). (The manuscript wrote (-omega_y, omega_x); that is
+    the surface-velocity direction, i.e. the wrong sign for the force.)
+    """
+    return np.pi*etat*R**3*np.sin(tau)**2 * np.array([omega_y, -omega_x, 0.0])
 
 
 def tangent_force_roll_viscous(omega_x, omega_y, h, R, etat):
-    """Viscous rolling resistance (Eq. ftroll), opposite sign to shear."""
-    return np.pi*etat*R*h*h * np.array([omega_y, -omega_x, 0.0])
+    """
+    Viscous rolling resistance (Eq. ftroll) for TRUE rolling (no contact slip).
+
+    With the no-slip translation v_cm = R(omega_y, -omega_x) the contact point is
+    instantaneously stationary, but cap elements at angle theta still slide at
+    |v_rel_t| = R*Omega*(1 - cos theta); the viscous traction opposes this. The
+    net in-plane direction is (-omega_y, omega_x) -- i.e. it OPPOSES the rolling
+    velocity v_cm = R(omega_y, -omega_x), which is the sign the case-5 sim shows.
+    (The old (omega_y, -omega_x) was for the earlier slip setup and is wrong for
+    true rolling.)
+
+    Magnitude pi*etat*R*h^2*Omega = etat*R*Omega*2 pi R^2 [(1-cos tau) -
+    sin^2 tau/2] is the ideal viscous integral. The sim is larger (~5x at this
+    overlap) because of elastic shear accumulated as nodes traverse the contact
+    and the non-objective v_rel_t in the pair style; neither is captured here.
+    """
+    return np.pi*etat*R*h*h * np.array([-omega_y, omega_x, 0.0])
+
+
+def tangent_force_roll_elastic(omega_x, omega_y, tau, R, kt):
+    """
+    ELASTIC rolling resistance -- the component the manuscript omits (it derives
+    only the viscous roll force, Eq. ftroll, and explicitly forgoes the elastic
+    part). Derived and validated 2026-06-16 against the case-5 sim (etat = 0).
+
+    In steady true rolling a surface node enters the contact patch
+    (radius a = R sin tau) at the leading edge with zero shear and convects
+    through it at the rolling speed v = R*Omega; the local slip
+    R*Omega*(1 - cos theta) integrates along the path to an elastic shear
+    DISPLACEMENT (independent of Omega, hence purely elastic)
+        u_s(x') = (a^3 - x'^3) / (6 R^2) ,
+    with x' the coordinate along the rolling direction. Integrating the elastic
+    shear stress tau_s = kt*u_s over the circular patch (the odd x'^3 term
+    integrates to zero) gives a net resisting force
+        |F_t,el^roll| = pi*kt*a^5/(6 R^2) = pi*kt*R^3*sin^5(tau)/6 ,
+    directed opposite the rolling velocity, i.e. along (-omega_y, omega_x).
+
+    Validation (N=400, kt=0.5e8): derived 77.7e3 vs sim 84.7e3 (~1.09, the same
+    mesh-resolution factor as the forces). It dominates the viscous roll force
+    (~19.6e3) by ~4x, which is why the viscous-only model underpredicts the sim.
+    """
+    Omega = np.hypot(omega_x, omega_y)
+    mag = np.pi*kt*R**3*np.sin(tau)**5/6.0
+    return mag*np.array([-omega_y, omega_x, 0.0])/Omega
+
+
+def torque_roll_elastic(omega_x, omega_y, d, R, kt):
+    """
+    Torque of the elastic rolling resistance: the contact-point lever
+    a = (R cos theta + d)/2 acting on F_t,el^roll. To leading order in the
+    overlap a -> (R + d)/2, giving magnitude ((R+d)/2)*|F_t,el^roll| along
+    (omega_x, omega_y) (= lever x force, same sense as the viscous roll torque
+    tangential term).
+    """
+    Omega = np.hypot(omega_x, omega_y)
+    tau = np.arccos(np.clip(d/R, -1.0, 1.0))
+    mag = (R + d)/2.0 * np.pi*kt*R**3*np.sin(tau)**5/6.0
+    return mag*np.array([omega_x, omega_y, 0.0])/Omega
 
 
 def max_shear_roll_force(Fn, mu):
@@ -185,14 +265,30 @@ def max_shear_roll_force(Fn, mu):
 
 
 def torque_max_shear_roll(omega_x, omega_y, d, R, kn, mu):
-    """Maximum torque due to shear and/or roll at the Coulomb limit."""
+    """
+    Maximum torque due to SHEAR (differential surface velocity -> sliding) at
+    the Coulomb limit. (True rolling has no contact slip, so it is not at the
+    Coulomb limit; the rolling-resistance torque is handled by the viscous roll
+    functions, despite this function's historical name.)
+
+    Direction from the lever arm r = (0, 0, -R): the slip traction is along the
+    friction force (omega_y, -omega_x), so T = r x F is along (-omega_x,
+    -omega_y).
+
+    LEVER-ARM CORRECTION (2026-06-16): lever arm is the contact-point distance
+    a(theta) = (R*cos(theta) + d)/2, not the local overlap delta. With traction
+    mu*kn*(R cos theta - d) opposing the uniform in-plane slip direction,
+        |T| = pi R^2 mu kn [R^2(1-cos^3 tau)/3 - d^2(1-cos tau)]
+    (the 1/Omega cancels against |(-omega_x,-omega_y)| = Omega). This is O(h^2)
+    ~ mu*Fn*<a> and matches the sim; the old overlap-lever form was O(h^3) and
+    ~20-60x too small. NB the direction is (-omega_x,-omega_y); the manuscript's
+    (-omega_y,-omega_x) (line ~1073) has the components swapped.
+    """
     Omega = np.hypot(omega_x, omega_y)
     tau = np.arccos(np.clip(d/R, -1.0, 1.0))
-    mag = (np.pi*mu*kn*R**3/Omega)*(
-        R**2/3.0*(1.0 - np.cos(tau)**3)
-        - R*d*(1.0 - np.cos(tau)**2)
-        + d**2*(1.0 - np.cos(tau)))
-    return mag*np.array([omega_y, -omega_x, 0.0])
+    c = np.cos(tau)
+    mag = np.pi*mu*kn*R**2*(R**2*(1.0 - c**3)/3.0 - d**2*(1.0 - c))
+    return mag*np.array([-omega_x, -omega_y, 0.0])/Omega
 
 
 def normal_viscous_torque(omega_x, omega_y, d, R, etan):
@@ -205,7 +301,14 @@ def normal_viscous_torque(omega_x, omega_y, d, R, etan):
     nothing to the z-velocity of the cap, so the mechanism that generates this
     torque is the same in both cases. Derived and verified (symbolically and by
     direct 2D integration) as
-        T = pi * etan * R^4 * (2/3 - cos tau + cos^3 tau / 3) * (omega_x, omega_y, 0).
+        T = pi * etan * R^4 * (2/3 - cos tau + cos^3 tau / 3) * (-omega_x, -omega_y, 0).
+
+    Direction: this is a DAMPING torque and must oppose the spin. The normal
+    dashpot resists the differential z-velocity v_z = omega_x*y across the cap,
+    producing T_x = integral(y*F_z) ~ -omega_x (and likewise T_y ~ -omega_y).
+    So the direction is (-omega_x, -omega_y, 0). (The manuscript's
+    (omega_x, omega_y) had the wrong sign -- it would be an anti-damping torque;
+    the case-5 roll dump confirms the (-omega_x, -omega_y) sense.)
 
     NOTE (manuscript correction): the manuscript wrote this term as
     pi*etan*R^5/2*(...) for shear and pi/2*etan*R^4*(...) for roll. Both are
@@ -222,16 +325,19 @@ def normal_viscous_torque(omega_x, omega_y, d, R, etan):
     """
     tau = np.arccos(np.clip(d/R, -1.0, 1.0))
     g = 2.0/3.0 - np.cos(tau) + np.cos(tau)**3/3.0
-    return np.pi*etan*R**4*g*np.array([omega_x, omega_y, 0.0])
+    return np.pi*etan*R**4*g*np.array([-omega_x, -omega_y, 0.0])
 
 
 def torque_shear_viscous(omega_x, omega_y, d, R, etan, etat):
     """Viscous torque for pure shear (T_eta)."""
     tau = np.arccos(np.clip(d/R, -1.0, 1.0))
-    # Tangential (eta_t) contribution, transcribed from the manuscript.
+    # Tangential (eta_t) contribution. Direction (-omega_x, -omega_y) from the
+    # contact-point lever acting on the shear friction force (omega_y, -omega_x).
+    # The d-term sign is + (contact-point lever a=(R cos theta + d)/2); the
+    # manuscript's - sign is the same overlap-lever error as the slip torques.
     tangential = (2.0*np.pi*etat*R**3*(R*(1.0 - np.cos(tau)**3)/6.0
-                                       - d*np.sin(tau)**2/4.0)
-                  )*np.array([omega_x, omega_y, 0.0])
+                                       + d*np.sin(tau)**2/4.0)
+                  )*np.array([-omega_x, -omega_y, 0.0])
     # Normal-viscous (eta_n) contribution, corrected and shared with roll.
     return tangential + normal_viscous_torque(omega_x, omega_y, d, R, etan)
 
@@ -240,14 +346,17 @@ def torque_roll_viscous(omega_x, omega_y, d, R, etan, etat):
     """Viscous torque for pure roll (T_eta^roll)."""
     tau = np.arccos(np.clip(d/R, -1.0, 1.0))
     # Tangential (eta_t) rolling-resistance contribution, transcribed from the
-    # manuscript (note its leading minus sign, opposite to shear).
-    tangential = -(2.0*np.pi*etat*R**3*(R*(1.0 - 3.0*np.cos(tau)**2 + 2.0*np.cos(tau)**3)/12.0
-                                        - d*(1.0 - np.cos(tau))**2/4.0)
+    # manuscript. Its leading minus sign combines with the bracket (positive for
+    # a small overlap) to give the (-omega_x, -omega_y) direction -- consistent
+    # with the lever arm r = (0, 0, -R) acting on the roll force (omega_y,
+    # -omega_x). This term is left as-is: it already points the right way (the
+    # 2026-06-11 audit's proposed extra negation here would double-flip it).
+    tangential = (2.0*np.pi*etat*R**3*(R*(1.0 - 3.0*np.cos(tau)**2 + 2.0*np.cos(tau)**3)/12.0
+                                        + d*(1.0 - np.cos(tau))**2/4.0)
                    )*np.array([omega_x, omega_y, 0.0])
-    # Normal-viscous (eta_n) contribution is the SAME as for shear (see helper).
-    # The manuscript folded this term inside the negated roll bracket, which
-    # also flipped its sign; the physically correct term is +pi*etan*R^4*g, so
-    # it is added here with the shear sign rather than subtracted.
+    # Normal-viscous (eta_n) contribution is the SAME as for shear (see helper),
+    # now corrected to point in (-omega_x, -omega_y) as a damping torque. It is
+    # added with a + sign in both callers; the helper carries the sign.
     return tangential + normal_viscous_torque(omega_x, omega_y, d, R, etan)
 
 
@@ -376,7 +485,7 @@ def analytical_solution(t, caseflag):
         vn = 0.0                   # constant normal velocity
         vt_mag = np.sqrt(vx_prescribed**2 + vy_prescribed**2)
         nt = np.array([-vx_prescribed, -vy_prescribed, 0.0]) / vt_mag  # tangent direction
-        torque_dir = np.array([vy_prescribed, -vx_prescribed, 0.0]) / vt_mag
+        torque_dir = np.array([-vy_prescribed, vx_prescribed, 0.0]) / vt_mag
 
         # Position drifts linearly under the constant tangent velocity; the
         # overlap (z) is held fixed. Force/torque are translation-invariant, but
@@ -430,7 +539,9 @@ def analytical_solution(t, caseflag):
             if coulomb_slip_met(omega_mag, d, R, kn, ketat, mu):
                 # Maximum shear: the dashpot alone reaches the Coulomb limit
                 Ft = max_shear_roll_force(Fn, mu)
-                Ft_vec = Ft*np.array([-omega_y, omega_x, 0.0])/omega_mag
+                # Friction opposes the contact-point surface velocity
+                # R*(-omega_y, omega_x); direction (omega_y, -omega_x).
+                Ft_vec = Ft*np.array([omega_y, -omega_x, 0.0])/omega_mag
                 T_vec = torque_max_shear_roll(omega_x, omega_y, d, R, kn, mu)
             else:
                 # Below the Coulomb limit: purely viscous solution
@@ -467,14 +578,16 @@ def analytical_solution(t, caseflag):
             T[i, :] = np.array([0.0, 0.0, T_twist])
 
     elif caseflag == 5:  # Roll
-        # Pure rolling where v_Omega = R*(-omega_y, omega_x, 0)
+        # TRUE rolling (no contact slip): the no-slip condition
+        # v_cm + omega x r_contact = 0, with r_contact = (0, 0, -R), gives
+        # v_cm = R*(omega_y, -omega_x, 0). The sim confirms zero contact slip.
         omega_x = 2.0  # rad/s
         omega_y = 1.5  # rad/s
         omega_mag = np.sqrt(omega_x**2 + omega_y**2)
 
-        # Linear velocity for pure rolling
-        vx_roll = -R*omega_y
-        vy_roll = R*omega_x
+        # Linear velocity for pure (no-slip) rolling
+        vx_roll = R*omega_y
+        vy_roll = -R*omega_x
         vz_roll = 0.0  # No vertical velocity
 
         # Held in contact at a constant overlap (vn = 0)
@@ -496,11 +609,17 @@ def analytical_solution(t, caseflag):
         Fn = normal_force_linear(h, vn, R, kn, ketan)
 
         for i in range(1, numSteps):
-            # Tangent force for roll (viscous rolling resistance, Eq. ftroll)
-            Ft_vec = tangent_force_roll_viscous(omega_x, omega_y, h, R, ketat)
+            # Tangent force for roll = viscous rolling resistance (Eq. ftroll) +
+            # the elastic rolling resistance (derived here, dominant ~4x). The
+            # manuscript gives only the viscous part; the elastic part is needed
+            # to match the sim. Set the elastic term to 0 to recover the
+            # manuscript's viscous-only solution.
+            Ft_vec = (tangent_force_roll_viscous(omega_x, omega_y, h, R, ketat)
+                      + tangent_force_roll_elastic(omega_x, omega_y, tau, R, kt))
             F[i, :] = np.array([Ft_vec[0], Ft_vec[1], Fn])
-            # Roll torque (viscous)
-            T[i, :] = torque_roll_viscous(omega_x, omega_y, d, R, ketan, ketat)
+            # Roll torque = viscous (eta_t tangential + eta_n normal) + elastic.
+            T[i, :] = (torque_roll_viscous(omega_x, omega_y, d, R, ketan, ketat)
+                       + torque_roll_elastic(omega_x, omega_y, d, R, kt))
 
     else:
         print("ERROR: INVALID CASEFLAG.")

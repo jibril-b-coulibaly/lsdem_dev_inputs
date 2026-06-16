@@ -440,7 +440,15 @@ def main(dt=1.0, caseflag=0, t_min=None, t_max=None, fig_width=8, fig_height=4.5
         Whether to show plot titles (default: True)
     """
     pattern = CASE_PATTERNS.get(caseflag, "dump_*.txt")
-    files = sorted(glob.glob(pattern))
+
+    # Sort by the NUMERIC node count, not the filename string, so that e.g.
+    # N=400 comes before N=1600 regardless of zero-padding (a string sort puts
+    # "..._400" after "..._1600"). This drives both the dataset colour order and
+    # the fewest-to-most ordering of the MAE convergence line.
+    def _node_key(f):
+        m = re.search(r'_0*(\d+)\.txt$', os.path.basename(f))
+        return int(m.group(1)) if m else (1 << 30)
+    files = sorted(glob.glob(pattern), key=_node_key)
 
     if len(files) == 0:
         print(f"No matching files found for case {caseflag} (pattern '{pattern}'). "
