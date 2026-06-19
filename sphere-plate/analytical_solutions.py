@@ -542,7 +542,14 @@ def analytical_solution(t, caseflag):
                 # Friction opposes the contact-point surface velocity
                 # R*(-omega_y, omega_x); direction (omega_y, -omega_x).
                 Ft_vec = Ft*np.array([omega_y, -omega_x, 0.0])/omega_mag
-                T_vec = torque_max_shear_roll(omega_x, omega_y, d, R, kn, mu)
+                # Total torque = slip-traction torque + the normal-viscous (eta_n)
+                # torque. The latter comes from the z-component of the viscous
+                # normal stress under horizontal spin and is present whether or
+                # not the tangent traction is Coulomb-capped; it points the same
+                # way (-omega_x, -omega_y) and is ~13% of the slip torque here.
+                # (The manuscript's max-shear/roll torque omitted it.)
+                T_vec = (torque_max_shear_roll(omega_x, omega_y, d, R, kn, mu)
+                         + normal_viscous_torque(omega_x, omega_y, d, R, ketan))
             else:
                 # Below the Coulomb limit: purely viscous solution
                 Ft_vec = tangent_force_shear_viscous(omega_x, omega_y, tau, R, ketat)
