@@ -1,0 +1,82 @@
+# ===========================================================================
+# LS-DEM on GPU (Kokkos / CUDA) -- 512-sphere FCC compression example
+# ===========================================================================
+# GPU variant of input_sphere_512. The MODEL is identical; only the INVOCATION
+# differs. Run it with the Kokkos GPU backend:
+#
+#     lmp -k on g 1 -sf kk -in input_sphere_512_gpu
+#
+#   -k on g 1   enable Kokkos, use 1 GPU
+#   -sf kk      append the /kk suffix to every style:
+#                 atom_style ls/dem        -> ls/dem/kk
+#                 pair_style ls/dem        -> ls/dem/kk
+#                 run_style  verlet        -> verlet/kk   (REQUIRED by the Kokkos run loop)
+#                 internal   property/atom -> property/atom/kk  (shear-history DualViews)
+#
+# LS-DEM /kk notes:
+#   * No `-pk kokkos neigh half` is needed -- the ls/dem/kk pair requests a half
+#     neighbour list itself.
+#   * The contact kernels run on the device: K1 (per-rep closest-contact winner
+#     reduction) + K2 (the full contact-force model + Rodrigues shear rotation).
+#     The rigid-body integration (fix rigid/small/ls/dem) and the neighbour build
+#     remain on the HOST in this version.
+#   * Only the SMALL fix (fix rigid/small/ls/dem) + GLOBAL level-set storage are
+#     GPU-accelerated; the large fix (fix rigid/ls/dem), DISTRIBUTED storage and
+#     watershed automatically fall back to the exact CPU path.
+#   * Results are within-tol of the CPU (the device atomic_add per-body sum reorders
+#     contributions), not bitwise, on dense multi-contact packings.
+#   * Build: PKG_KOKKOS + Kokkos_ENABLE_CUDA + the GPU arch (e.g. Kokkos_ARCH_PASCAL61
+#     for an MX250), CMAKE_CXX_COMPILER=lib/kokkos/bin/nvcc_wrapper.
+#   * For pure timing, comment out the `dump` line below (dump I/O can dominate the
+#     wall clock), and note the neighbour build (host) is currently the largest cost.
+# ===========================================================================
+
+units si
+dimension 3
+boundary p p p
+atom_style ls/dem
+comm_modify vel yes cutoff 0.25
+atom_modify map yes
+newton off
+
+# Box size is 2.0*sqrt(2.0)*r*nUnitCells = latticeLen*nUnitCells = 1.35764501988
+lattice fcc 0.40 #just a guess at a value
+region             box block 0 4 0 4 0 4
+create_box         1 box
+
+molecule        mymol mol_sphere_512
+
+mass            1 1.0
+
+create_atoms    0 box mol mymol 1234 rotate 0 0 0 1
+
+
+variable        molID atom floor((id-1)/512)+1
+#set             group all mol v_molID
+
+
+# Initial velocities are given in infile_sphere
+
+neighbor       0.01 bin
+neigh_modify   exclude molecule/intra all
+fix            1 all rigid/small/ls/dem molecule
+
+pair_style ls/dem 0.18
+# pair_coeff * * kn kt mu etan etat knp cut kn1 etan1 kt1 etat1
+pair_coeff * * 1.0e7 0.25e7 0.5 0 0 0 0.18
+
+timestep 2e-3
+thermo_style custom step pxx pyy pzz pxy pxz pyz
+thermo 1
+# (rename vs the CPU reference dump so this example does not clobber it; drop for timing)
+dump mydump all custom 10 atomDump_sphere_512_gpu id type mol x y z ix iy iz vx vy vz fx fy fz
+
+variable erate equal 0.01      # fractional strain rate (1% per time unit)
+variable tot_strain equal 0.20 # target strain (20%)
+
+# Number of time steps to maximum compression = ceil((v_tot_strain/v_erate)/timestep) = 25000
+
+# --- Apply compression along z (positive engineering strain) ---
+# remap x : atom positions are rescaled with the box (typical for homogeneous strain)
+fix 2 all deform 1 z erate $(-v_erate) units box remap v
+run 100
