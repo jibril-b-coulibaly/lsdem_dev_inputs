@@ -1,0 +1,82 @@
+# ===========================================================================
+# LS-DEM -- 512-sphere FCC compression, RIGHT-SIZED cutoffs (auto)
+# ===========================================================================
+# Same physical model as input_sphere_512, but it lets LS-DEM size BOTH cutoffs
+# automatically instead of hard-coding an over-generous node-node cutoff. This
+# is the recommended way to set up an LS-DEM run.
+#
+#   1) pair_style ls/dem auto
+#      Derives the node-node (contact SEARCH) cutoff from the grain node spacing:
+#        auto cutoff = 2 x worst-case node spacing = 2 x 0.0188 = 0.0376  (here)
+#      The hard-coded 0.18 in input_sphere_512 is ~9.5x the node spacing (and
+#      larger than the grain RADIUS 0.12), so it pulls in ~326 neighbours/atom
+#      that are nodes of non-touching grains. The auto cutoff gives ~0.1
+#      neighbours/atom -- a ~3000x smaller neighbour list (42.7M -> 13k pairs)
+#      and a much cheaper neighbour build, with a BITWISE-IDENTICAL trajectory
+#      (validated frame-by-frame against the committed atomDump_sphere_512).
+#      Optionally tighten further with a smaller factor, e.g. `pair_style
+#      ls/dem auto 1.5` (must stay > 1.0 x the node spacing).
+#
+#   2) NO `comm_modify ... cutoff` is needed.
+#      A grain's surface nodes look up the atom that OWNS their body through the
+#      ghost shell; that reach is the GRAIN EXTENT, not the pair cutoff. The fix
+#      auto-sizes the communication (ghost) cutoff from the grain geometry
+#      (grain extent + pair cutoff), so reducing the pair cutoff for performance
+#      can never break body-owner lookups under MPI ("cannot find atom that owns
+#      body"). It prints the value it chose; override with `comm_modify cutoff`
+#      if you need a larger ghost shell for other reasons.
+#
+# (Only `comm_modify vel yes` remains, because pair ls/dem reads ghost velocities.)
+# ===========================================================================
+
+units si
+dimension 3
+boundary p p p
+atom_style ls/dem
+comm_modify vel yes
+atom_modify map yes
+newton off
+
+# Box size is 2.0*sqrt(2.0)*r*nUnitCells = latticeLen*nUnitCells = 1.35764501988
+lattice fcc 0.40 #just a guess at a value
+region             box block 0 4 0 4 0 4
+create_box         1 box
+
+molecule        mymol mol_sphere_512
+
+mass            1 1.0
+
+create_atoms    0 box mol mymol 1234 rotate 0 0 0 1
+
+
+variable        molID atom floor((id-1)/512)+1
+#set             group all mol v_molID
+
+
+# Initial velocities are given in infile_sphere
+
+neighbor       0.01 bin
+neigh_modify   exclude molecule/intra all
+fix            1 all rigid/small/ls/dem molecule
+
+pair_style ls/dem auto
+# pair_coeff * * kn kt mu etan etat knp cut kn1 etan1 kt1 etat1
+# (the trailing cut field is ignored under 'auto'; it is overwritten by the
+#  auto-derived node-spacing cutoff)
+pair_coeff * * 1.0e7 0.25e7 0.5 0 0 0 0.18
+
+timestep 2e-3
+thermo_style custom step pxx pyy pzz pxy pxz pyz
+thermo 1
+# (rename vs the CPU reference dump so this example does not clobber it; drop for timing)
+dump mydump all custom 10 atomDump_sphere_512_auto id type mol x y z ix iy iz vx vy vz fx fy fz
+
+variable erate equal 0.01      # fractional strain rate (1% per time unit)
+variable tot_strain equal 0.20 # target strain (20%)
+
+# Number of time steps to maximum compression = ceil((v_tot_strain/v_erate)/timestep) = 25000
+
+# --- Apply compression along z (positive engineering strain) ---
+# remap x : atom positions are rescaled with the box (typical for homogeneous strain)
+fix 2 all deform 1 z erate $(-v_erate) units box remap v
+run 100
