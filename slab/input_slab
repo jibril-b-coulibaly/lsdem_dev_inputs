@@ -1,0 +1,49 @@
+# Elongated-slab packing for the LS-DEM item-2c normal-filter demo.
+# 27 randomly-oriented 3:1 slabs (small fix + GLOBAL storage -> runs on CPU and
+# GPU), isotropically compressed until they interlock at EDGES/CORNERS -- the
+# contacts where the over-generous auto cutoff (sized for the sparse z node
+# spacing) leaves back-facing false candidates that "pair_style ls/dem auto
+# nfilter" removes. Run with/without the trailing nfilter keyword to compare.
+units si
+dimension 3
+boundary p p p
+atom_style ls/dem
+# body-owner reach for a 3:1 slab is ~grain length (~11) + pair cutoff -> the
+# comm/ghost cutoff must be ~12, which forces a box several times that for the
+# neighbour binning (long grains are awkward in small boxes).
+comm_modify vel yes cutoff 12.0
+atom_modify map yes
+newton off
+
+# In non-lj units, the lattice scale IS the spacing (distance units): 12 > slab
+# diameter ~9.6 so the randomly-rotated grains start clear; box 36 (= 3 x 12) >>
+# 2 x comm cutoff, so the neighbour binning is happy.
+lattice sc 12.0
+region box block 0 3 0 3 0 3
+create_box 1 box
+
+molecule mymol mol_slab
+mass 1 1.0
+# no 'rotate' keyword -> create_atoms uses the seed for a RANDOM orientation per
+# inserted molecule (gives edge/corner contacts, not axis-aligned flat faces).
+create_atoms 0 box mol mymol 1234
+
+neighbor 0.3 bin
+neigh_modify exclude molecule/intra all
+fix 1 all rigid/small/ls/dem molecule
+
+# auto factor 5 -> node-node cutoff ~5 x 0.32 = 1.6: large enough to cover the
+# SPARSE z node spacing (0.96), hence necessarily OVER-GENEROUS for the DENSE x/y
+# faces -- the anisotropy that the normal filter recovers. Add the nfilter
+# keyword to enable it (compare runs with/without).
+pair_style ls/dem auto 5.0
+# pair_coeff * * kn kt mu etan etat knp cut   (cut overridden by 'auto')
+pair_coeff * * 1.0e6 0.25e6 0.5 2.0 0.5 0 1.0
+
+timestep 1e-3
+thermo_style custom step atoms
+thermo 50
+
+# isotropic compression to drive the grains into contact
+fix 2 all deform 1 x erate -0.4 y erate -0.4 z erate -0.4 units box remap v
+run 600
